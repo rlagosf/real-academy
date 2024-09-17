@@ -1,7 +1,9 @@
 <template>
     <section class="about-us" id="about">
       <h2>Sobre Nosotros</h2>
-      <p>Somos una academia dedicada a la formación de jóvenes talentos en el fútbol.</p>
+      <p>Fundamos nuestra academia en el año 2023 con la misión de impulsar el desarrollo integral de nuestros jugadores, fortaleciendo habilidades técnicas, tácticas y físicas, así como aspectos emocionales e interpersonales.
+      Ofrecemos un viaje completo de desarrollo futbolístico a través de nuestros cinco segmentos: Junior, Formativo, Competitivo, Proyección y Proyecto USA. En cada una, desarrollamos una planificación deportiva que fusiona las mejores técnicas de Europa y Sudamérica.
+</p>
     </section>
   </template>
   

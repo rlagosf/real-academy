@@ -27,7 +27,18 @@ export default {
   methods: {
     toggleMenu() {
       this.isMenuOpen = !this.isMenuOpen;
+    },
+    handleResize() {
+      if (window.innerWidth > 768) {
+        this.isMenuOpen = false;
+      }
     }
+  },
+  mounted() {
+    window.addEventListener('resize', this.handleResize);
+  },
+  beforeUnmount() {
+    window.removeEventListener('resize', this.handleResize);
   }
 };
 </script>
@@ -48,7 +59,7 @@ export default {
 }
 
 .logo img {
-  height: 40px; /* Ajusta el tamaño según sea necesario */
+  height: 45px; /* Ajusta el tamaño según sea necesario */
   width: auto;  /* Mantiene la relación de aspecto */
 }
 
@@ -73,7 +84,7 @@ export default {
   color: #FF007F;
 }
 
-/* Responsive Menu */
+/* Estilos para el icono del menú */
 .menu-toggle {
   display: none;
   cursor: pointer;
@@ -83,18 +94,18 @@ export default {
 
 .menu-icon::before {
   content: '☰'; /* Icono de menú hamburguesa */
-}
-
-/* Estilos para menú en dispositivos móviles */
-.nav-links {
-  display: flex;
-  flex-direction: row;
-}
-
-.nav-links--active {
   display: block;
+  font-size: 1.5em;
+  color: white;
+  transition: filter 0.3s ease;
 }
 
+/* Cambio de color del icono al pasar el cursor */
+.menu-toggle:hover .menu-icon::before {
+  filter: invert(34%) sepia(80%) saturate(4899%) hue-rotate(329deg) brightness(95%) contrast(97%);
+}
+
+/* Responsive Menu */
 @media (max-width: 768px) {
   .nav-links {
     display: none;
@@ -104,7 +115,7 @@ export default {
     right: 0;
     background-color: #000;
     width: 100%;
-    box-sizing: border-box; /* Asegura que el padding no afecte el ancho total */
+    box-sizing: border-box;
   }
 
   .nav-links li {
@@ -118,6 +129,17 @@ export default {
 
   .nav-links.nav-links--active {
     display: flex;
+  }
+}
+
+@media (min-width: 769px) {
+  .nav-links {
+    display: flex; /* Asegura que el menú esté siempre visible en pantallas grandes */
+    flex-direction: row;
+  }
+
+  .menu-toggle {
+    display: none;
   }
 }
 </style>
