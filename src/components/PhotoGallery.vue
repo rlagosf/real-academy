@@ -1,184 +1,134 @@
 <template>
-  <section class="photo-gallery">
-    <h2>Galería de Fotos</h2>
-    <div class="carousel-wrapper">
-      <!-- Carrusel de Swiper -->
-      <swiper
-        :slides-per-view="1"
-        :loop="true"
-        :centered-slides="true"
-        :pagination="{ clickable: true }"
-        :navigation="true"
-        class="my-swiper"
-      >
-        <swiper-slide v-for="n in totalImages" :key="n" class="slide">
-          <img
-            :src="getImagePath(n)"
-            alt="Foto de galería"
-            class="carousel-image"
-            @click="openModal(n)"
-          />
-        </swiper-slide>
-
-        <!-- Paginación (puntos) -->
-        <div class="swiper-pagination"></div>
-
-        <!-- Botones de navegación -->
-        <div class="swiper-button-next"></div>
-        <div class="swiper-button-prev"></div>
-      </swiper>
-    </div>
-
-    <!-- Modal para la imagen en tamaño completo -->
-    <transition name="modal-transition">
-      <div v-if="showModal" class="modal" @click="closeModal">
-        <span class="close">&times;</span>
-        <img class="modal-content" :src="getImagePath(selectedImage)" />
+  <div class="container">
+    <div class="slider">
+      <div class="slide-track">
+        <!-- Duplicar las imágenes para evitar el lapso en blanco -->
+        <div class="slide" v-for="(image, index) in imageUrls.concat(imageUrls)" :key="'first-' + index">
+          <img :src="image" @click="openModal(image)" alt="" />
+        </div>
       </div>
-    </transition>
-  </section>
+    </div>
+    <div v-if="modalVisible" class="modal-overlay" @click="closeModal">
+      <div class="modal-content" @click.stop>
+        <img :src="modalImage" alt="" />
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-import { Swiper, SwiperSlide } from 'swiper/vue';
-import 'swiper/swiper-bundle.css';
-
 export default {
   name: 'PhotoGallery',
-  components: {
-    Swiper,
-    SwiperSlide,
-  },
   data() {
     return {
-      showModal: false,
-      selectedImage: null,
-      totalImages: 10, // Número total de imágenes
-    };
+      imageUrls: [], // Aquí se almacenarán las URLs de las imágenes
+      modalVisible: false,
+      modalImage: null
+    }
+  },
+  async created() {
+    // Aquí debes obtener las URLs de las imágenes, por ejemplo, desde una API
+    this.imageUrls = await this.fetchImageUrls();
   },
   methods: {
-    getImagePath(n) {
-      return `/real-academy-fc/fotos-real/foto-real-facup-${n}.jpeg`;
+    async fetchImageUrls() {
+      // Implementa la lógica para obtener las URLs de las imágenes, por ejemplo, desde una API
+      // Aquí se usa una lista estática de ejemplo
+      const totalImages = 30; // Cambia este número según el total de imágenes que tengas
+      return Array.from({ length: totalImages }, (_, i) => `/real-academy-fc/fotos-real/foto-real-facup-${i + 1}.jpeg`);
     },
-    openModal(n) {
-      this.selectedImage = n;
-      this.showModal = true;
-      document.body.style.overflow = 'hidden'; // Desactivar scroll cuando el modal esté abierto
+    openModal(imageUrl) {
+      this.modalImage = imageUrl;
+      this.modalVisible = true;
+      document.body.style.overflow = 'hidden'; // Desactiva el scroll del sitio web
     },
     closeModal() {
-      this.showModal = false;
-      document.body.style.overflow = 'auto'; // Activar scroll cuando el modal se cierre
-    },
-  },
-};
+      this.modalVisible = false;
+      document.body.style.overflow = ''; // Reactiva el scroll del sitio web
+    }
+  }
+}
 </script>
 
 <style scoped>
-.photo-gallery {
-  padding: 60px 30px;
-  background-color: #fff;
-  text-align: center;
+body {
+  margin: 0; /* Elimina el margen del body para que el carrusel pueda ocupar todo el ancho */
 }
 
-h2 {
-  color: #FF007F;
-  margin-bottom: 30px;
+.container {
+  position: relative;
 }
 
-/* Contenedor del carrusel */
-.carousel-wrapper {
-  width: 100%;
-  max-width: 900px;
-  margin: 0 auto;
+@keyframes scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(calc(-400px * 30)) } /* Ajusta el cálculo según el total de imágenes */
 }
 
-.my-swiper {
-  width: 100%;
+.slider {
+  background: white;
+  box-shadow: 0 10px 20px -5px rgba(0, 0, 0, .125);
+  height: 600px; /* Ajusta la altura del carrusel según el tamaño de las imágenes */
+  margin: auto;
+  overflow: hidden;
+  position: relative;
+  width: 100vw; /* Abarca todo el ancho del viewport */
 }
 
-.carousel-image {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-  cursor: pointer;
+.slider::before,
+.slider::after {
+  background: linear-gradient(to right, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%);
+  content: "";
+  height: 600px; /* Ajusta la altura según la nueva altura del carrusel */
+  position: absolute;
+  width: 200px;
+  z-index: 2;
 }
 
-/* Modal */
-.modal {
+.slider::after {
+  right: 0;
+  top: 0;
+  transform: rotateZ(180deg);
+}
+
+.slider::before {
+  left: 0;
+  top: 0;
+}
+
+.slide-track {
+  animation: scroll 80s linear infinite; /* Ajusta la duración según la velocidad deseada */
+  display: flex;
+  width: calc(400px * 60); /* Ajusta el cálculo según el total de imágenes duplicadas */
+}
+
+.slide img {
+  height: 600px; /* Ajusta la altura de las imágenes */
+  width: 400px; /* Ajusta el ancho de las imágenes */
+  cursor: pointer; /* Cambia el cursor para indicar que es clicable */
+  transition: transform 0.3s ease; /* Transición suave para el zoom */
+}
+
+.slide img:hover {
+  transform: scale(1.1); /* Aumenta el tamaño de la imagen al pasar el puntero */
+}
+
+/* Modal styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
-  position: fixed;
-  z-index: 1000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background-color: rgba(0, 0, 0, 0.9);
+  z-index: 1000; /* Asegura que el modal esté sobre todo el contenido */
 }
 
-.modal-content {
-  max-width: 90%;
-  max-height: 90%;
-  margin: auto;
-  display: block;
-  border-radius: 0; /* Eliminar border-radius del modal */
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-}
-
-.close {
-  position: absolute;
-  top: 15px;
-  right: 35px;
-  color: #fff;
-  font-size: 40px;
-  font-weight: bold;
-  transition: 0.3s;
-}
-
-.close:hover,
-.close:focus {
-  color: #ff007f;
-  cursor: pointer;
-}
-
-/* Efecto de transición en el modal */
-.modal-transition-enter-active, .modal-transition-leave-active {
-  transition: opacity 0.5s ease;
-}
-.modal-transition-enter, .modal-transition-leave-to {
-  opacity: 0;
-}
-
-/* Paginación de Swiper */
-.swiper-pagination {
-  bottom: 10px;
-}
-
-.swiper-pagination-bullet {
-  background-color: #ccc;
-}
-
-.swiper-pagination-bullet-active {
-  background-color: #FF007F;
-}
-
-/* Botones de navegación */
-.swiper-button-next,
-.swiper-button-prev {
-  color: #FF007F;
-}
-
-.swiper-button-next::after,
-.swiper-button-prev::after {
-  font-size: 20px;
-}
-
-/* Responsividad */
-@media screen and (max-width: 768px) {
-  .carousel-wrapper {
-    max-width: 100%;
-  }
+.modal-content img {
+  max-width: 90vw;
+  max-height: 90vh;
+  border-radius: 20px; /* Ajusta el border-radius según sea necesario */
 }
 </style>
