@@ -35,7 +35,7 @@
 
 <script>
 export default {
-  name: 'AboutUs'
+  name: 'AboutUs',
 };
 </script>
 
@@ -51,13 +51,13 @@ export default {
 h2 {
   color: #FF007F;
   margin-bottom: 30px;
+  font-size: 2.5em; /* Aumenta el tamaño del título */
 }
 
 /* Grid general */
 .grid-container {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* Dos columnas */
-  grid-template-rows: auto auto;  /* Dos filas automáticas */
+  grid-template-columns: 1fr 1fr; /* Dos columnas para pantallas grandes */
   gap: 20px;
   align-items: center;
   justify-items: center;
@@ -70,24 +70,59 @@ h2 {
 /* Estilos para el contenido de texto */
 .grid-item.text p {
   margin: 0;
-  line-height: 1.6;
+  line-height: 1.8;
+  font-size: 1.2em; /* Aumenta el tamaño de los párrafos */
 }
 
 /* Imágenes responsivas */
 .responsive-img {
-  max-width: 80%;
+  max-width: 60%;
   height: auto;
   border-radius: 8px;
+  min-width: 350px;
 }
 
-/* Diseño responsivo para pantallas más pequeñas */
+/* Reordenar elementos en pantallas pequeñas */
 @media (max-width: 768px) {
   .grid-container {
-    grid-template-columns: 1fr; /* Una columna en dispositivos pequeños */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centrar los elementos dentro del contenedor */
+  }
+
+  /* Centrar el contenido de texto */
+  .grid-item.text {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+
+  /* Reordenar texto e imagen */
+  .grid-item.text:nth-of-type(odd) {
+    order: calc(var(--i, 1) * 2 - 1); /* Textos en posiciones impares */
+  }
+
+  .grid-item.image:nth-of-type(even) {
+    order: calc(var(--i, 1) * 2); /* Imágenes en posiciones pares */
   }
 
   .grid-item {
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    order: var(--i, 1);
+    width: 100%;
+  }
+
+  /* Aumentar el tamaño del texto en dispositivos pequeños */
+  h2 {
+    font-size: 2em; /* Ajustar el tamaño del título en pantallas pequeñas */
+  }
+
+  .grid-item.text p {
+    font-size: 1.1em; /* Ajustar el tamaño del párrafo en pantallas pequeñas */
   }
 }
 </style>

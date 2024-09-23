@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" id="gallery">
     <div class="slider">
       <div class="slide-track">
         <!-- Duplicar las imágenes para evitar el lapso en blanco -->
@@ -22,28 +22,27 @@ export default {
   data() {
     return {
       imageUrls: [], // Aquí se almacenarán las URLs de las imágenes
-      modalVisible: false,
-      modalImage: null
+      modalVisible: false, // Controla la visibilidad del modal
+      modalImage: null // Almacena la URL de la imagen que se muestra en el modal
     }
   },
   async created() {
     // Aquí debes obtener las URLs de las imágenes, por ejemplo, desde una API
-    this.imageUrls = await this.fetchImageUrls();
+    this.imageUrls = await this.fetchImageUrls(); // Llama a la función para obtener las URLs
   },
   methods: {
     async fetchImageUrls() {
       // Implementa la lógica para obtener las URLs de las imágenes, por ejemplo, desde una API
-      // Aquí se usa una lista estática de ejemplo
       const totalImages = 30; // Cambia este número según el total de imágenes que tengas
       return Array.from({ length: totalImages }, (_, i) => `/real-academy-fc/fotos-real/foto-real-facup-${i + 1}.jpeg`);
     },
     openModal(imageUrl) {
-      this.modalImage = imageUrl;
-      this.modalVisible = true;
+      this.modalImage = imageUrl; // Asigna la URL de la imagen al modal
+      this.modalVisible = true; // Muestra el modal
       document.body.style.overflow = 'hidden'; // Desactiva el scroll del sitio web
     },
     closeModal() {
-      this.modalVisible = false;
+      this.modalVisible = false; // Oculta el modal
       document.body.style.overflow = ''; // Reactiva el scroll del sitio web
     }
   }
@@ -56,79 +55,64 @@ body {
 }
 
 .container {
-  position: relative;
+  position: relative; /* Establece un contexto para los elementos hijos */
 }
 
 @keyframes scroll {
   0% { transform: translateX(0); }
-  100% { transform: translateX(calc(-400px * 30)) } /* Ajusta el cálculo según el total de imágenes */
+  100% { transform: translateX(calc(-400px * 30)) } /* Animación que mueve las imágenes hacia la izquierda */
 }
 
 .slider {
-  background: white;
-  box-shadow: 0 10px 20px -5px rgba(0, 0, 0, .125);
-  height: 600px; /* Ajusta la altura del carrusel según el tamaño de las imágenes */
-  margin: auto;
-  overflow: hidden;
-  position: relative;
+  background: black; /* Cambia el fondo del carrusel a negro para un efecto flotante */
+  height: 500px; /* Ajusta la altura del carrusel según el tamaño de las imágenes */
+  margin: auto; /* Centra el carrusel */
+  overflow: hidden; /* Oculta el contenido que desborda el contenedor */
+  position: relative; /* Permite la posición absoluta de los hijos */
   width: 100vw; /* Abarca todo el ancho del viewport */
 }
 
-.slider::before,
-.slider::after {
-  background: linear-gradient(to right, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%);
-  content: "";
-  height: 600px; /* Ajusta la altura según la nueva altura del carrusel */
-  position: absolute;
-  width: 200px;
-  z-index: 2;
-}
-
-.slider::after {
-  right: 0;
-  top: 0;
-  transform: rotateZ(180deg);
-}
-
-.slider::before {
-  left: 0;
-  top: 0;
-}
-
 .slide-track {
-  animation: scroll 80s linear infinite; /* Ajusta la duración según la velocidad deseada */
-  display: flex;
-  width: calc(400px * 60); /* Ajusta el cálculo según el total de imágenes duplicadas */
+  animation: scroll 80s linear infinite; /* Animación que hace que el carrusel se desplace de forma continua */
+  display: flex; /* Utiliza flexbox para alinear las imágenes en fila */
+  width: calc(300px * 60); /* Establece el ancho total de la pista del carrusel */
 }
 
 .slide img {
-  height: 600px; /* Ajusta la altura de las imágenes */
-  width: 400px; /* Ajusta el ancho de las imágenes */
+  height: 300px; /* Ajusta la altura de las imágenes */
+  width: 300px; /* Ajusta el ancho de las imágenes para que sean cuadradas */
   cursor: pointer; /* Cambia el cursor para indicar que es clicable */
-  transition: transform 0.3s ease; /* Transición suave para el zoom */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave para el zoom y el borde */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Borde difuminado entre las imágenes */
+  margin: 20px; /* Separación horizontal entre las imágenes */
+  border-radius: 50%; /* Hace que las imágenes sean completamente redondas */
+  object-fit: cover; /* Ajusta la imagen dentro del contenedor circular sin perder proporción */
+  position: relative; /* Posicionamiento relativo para ajustar el vertical */
+  top: 100px; /* Baja las imágenes un poco más para centrar visualmente */
 }
 
 .slide img:hover {
   transform: scale(1.1); /* Aumenta el tamaño de la imagen al pasar el puntero */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); /* Aumenta el efecto de sombra al hacer hover */
 }
 
-/* Modal styles */
+/* Estilos del modal */
 .modal-overlay {
-  position: fixed;
+  position: fixed; /* Fija el modal a la ventana */
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: rgba(0, 0, 0, 0.8); /* Fondo oscuro con opacidad para el modal */
+  display: flex; /* Utiliza flexbox para centrar el contenido del modal */
+  align-items: center; /* Alinea verticalmente al centro */
+  justify-content: center; /* Alinea horizontalmente al centro */
   z-index: 1000; /* Asegura que el modal esté sobre todo el contenido */
 }
 
 .modal-content img {
-  max-width: 90vw;
-  max-height: 90vh;
-  border-radius: 20px; /* Ajusta el border-radius según sea necesario */
+  max-width: 90vw; /* Limita el tamaño máximo de la imagen en el modal */
+  max-height: 90vh; /* Limita la altura máxima de la imagen en el modal */
+  border-radius: 20px; /* Agrega un borde redondeado a la imagen del modal */
 }
 </style>

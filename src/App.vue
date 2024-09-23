@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <MainNavigator />
+    <VideoBackground />
     <PhotoGallery />
     <AboutUs />
     <MapLocation />
@@ -11,7 +12,7 @@
 
 <script>
 import MainNavigator from './components/MainNavigator.vue';
-//import VideoBackground from './components/VideoBackground.vue';
+import VideoBackground from './components/VideoBackground.vue';
 import AboutUs from './components/AboutUs.vue';
 import PhotoGallery from './components/PhotoGallery.vue';
 import MapLocation from './components/MapLocation.vue';
@@ -21,7 +22,7 @@ import RealFoot from './components/RealFoot.vue';
 export default {
   components: {
     MainNavigator,
-    //VideoBackground,
+    VideoBackground,
     AboutUs,
     PhotoGallery,
     MapLocation,

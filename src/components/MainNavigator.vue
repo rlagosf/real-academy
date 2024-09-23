@@ -1,12 +1,12 @@
 <template>
-  <nav class="navigator" :class="{ 'scrolled': isScrolled }">
+  <nav class="navigator" :class="{ 'scrolled': isScrolled, 'black-background': isBlackBackground, 'pink-background': isPinkBackground }">
     <div class="logo">
       <img src="/real-academy-fc/logo-en-blanco.png" alt="Real Academy Logo" />
     </div>
     <div class="menu-toggle" @click="toggleMenu">
       <span class="menu-icon"></span>
     </div>
-    <ul class="nav-links" :class="{ 'nav-links--active': isMenuOpen, 'scrolled': isScrolled && !isMenuOpen }">
+    <ul class="nav-links" :class="{ 'nav-links--active': isMenuOpen }">
       <li><a href="#home" @click="scrollToSection($event, '#home')">Inicio</a></li>
       <li><a href="#about" @click="scrollToSection($event, '#about')">Sobre Nosotros</a></li>
       <li><a href="#gallery" @click="scrollToSection($event, '#gallery')">Galería</a></li>
@@ -22,7 +22,9 @@ export default {
   data() {
     return {
       isMenuOpen: false,
-      isScrolled: false
+      isScrolled: false,
+      isBlackBackground: false,
+      isPinkBackground: false
     };
   },
   methods: {
@@ -30,22 +32,41 @@ export default {
       this.isMenuOpen = !this.isMenuOpen;
     },
     handleScroll() {
-      this.isScrolled = window.scrollY > 50;
+      const currentScroll = window.scrollY;
+      const videoHeight = document.querySelector('.video-background').offsetHeight;
+      
+      // Ajusta los umbrales
+      const whiteBackgroundThreshold = this.isMenuOpen ? 1000 : 800; 
+      const blackBackgroundThreshold = videoHeight;
+
+      this.isScrolled = currentScroll > 50;
+
+      // Cambios de fondo
+      this.isBlackBackground = currentScroll > blackBackgroundThreshold && currentScroll <= whiteBackgroundThreshold;
+      this.isPinkBackground = currentScroll > whiteBackgroundThreshold;
+
+      // Cierra el menú si se hace scroll
+      if (this.isMenuOpen) {
+        this.isMenuOpen = false; // Cierra el menú al hacer scroll
+      }
+
+      // Mantiene el estado de la barra
+      if (this.isPinkBackground) {
+        this.isScrolled = true; 
+      }
     },
     scrollToSection(event, target) {
-      event.preventDefault(); // Prevenir el comportamiento por defecto del enlace
-
-      // Obtener el elemento objetivo al que se desea desplazarse
+      event.preventDefault();
+      
       const element = document.querySelector(target);
       if (element) {
-        const offsetTop = element.offsetTop - 60; // Ajusta según la altura de la barra de navegación
+        const offsetTop = element.offsetTop - 60;
 
         window.scrollTo({
           top: offsetTop,
-          behavior: 'smooth' // Desplazamiento suave
+          behavior: 'smooth'
         });
 
-        // Cierra el menú si está abierto en modo responsive
         if (this.isMenuOpen) {
           this.isMenuOpen = false;
         }
@@ -62,7 +83,6 @@ export default {
 </script>
 
 <style scoped>
-/* Configura un desplazamiento suave global */
 html {
   scroll-behavior: smooth;
 }
@@ -72,7 +92,7 @@ html {
   justify-content: space-between;
   align-items: center;
   padding: 15px 30px;
-  background-color: #000;
+  background-color: transparent; /* Comienza transparente */
   color: white;
   position: fixed;
   width: 100%;
@@ -82,12 +102,16 @@ html {
   transition: background-color 0.5s ease;
 }
 
-.navigator.scrolled {
-  background-color: #FF007F;
+.navigator.black-background {
+  background-color: #000; /* Cambia a negro */
+}
+
+.navigator.pink-background {
+  background-color: #FF007F; /* Cambia a rosado */
 }
 
 .logo img {
-  height: 45px;
+  height: 60px;
   width: auto;
 }
 
@@ -113,8 +137,9 @@ html {
   color: #FF007F;
 }
 
-.nav-links.scrolled a {
-  color: black;
+/* Cambia el color del texto a negro al pasar el cursor sobre los enlaces cuando la barra es rosada */
+.navigator.scrolled .nav-links a:hover {
+  color: black; /* Cambia a negro al hacer hover */
 }
 
 /* Estilos para el icono del menú */
@@ -137,38 +162,48 @@ html {
   filter: invert(34%) sepia(80%) saturate(4899%) hue-rotate(329deg) brightness(95%) contrast(97%);
 }
 
-/* Responsive Menu */
 @media (max-width: 768px) {
+  .menu-toggle {
+    display: block;
+    z-index: 1001;
+  }
+
   .nav-links {
     display: none;
     flex-direction: column;
     position: absolute;
-    top: 60px;
+    top: 80px;
     right: 0;
-    background-color: #000;
+    background-color: transparent; /* Cambia a transparente */
     width: 100%;
     box-sizing: border-box;
-  }
-
-  .nav-links li {
-    margin: 10px 0;
-    padding: 0 20px;
+    z-index: 999;
+    padding-left: 40px; /* Añade padding a la izquierda para alinearlo con el logo */
   }
 
   .nav-links.nav-links--active {
     display: flex;
   }
 
+  .nav-links.nav-links--active li {
+    margin: 5px 0; /* Reduce el margen para que estén más juntos */
+    padding: 10px 0; /* Ajusta el padding verticalmente si es necesario */
+  }
+
+  .navigator.scrolled .nav-links {
+    background-color: #FF007F; /* Cambia a rosado */
+  }
+
   .nav-links.nav-links--active a {
     color: white;
   }
 
-  .menu-toggle {
-    display: block;
+  .navigator.scrolled .nav-links.nav-links--active a {
+    color: black; /* Cambia el color a negro */
   }
 
-  .nav-links.scrolled a {
-    color: white;
+  .navigator.scrolled .nav-links a:hover {
+    color: black; /* Cambia a negro al pasar el cursor */
   }
 }
 
