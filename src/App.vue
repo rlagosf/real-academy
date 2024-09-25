@@ -7,6 +7,7 @@
     <MapLocation />
     <ContactForm />
     <RealFoot />
+    <SucessfullAcademy />
   </div>
 </template>
 
@@ -18,6 +19,7 @@ import PhotoGallery from './components/PhotoGallery.vue';
 import MapLocation from './components/MapLocation.vue';
 import ContactForm from './components/ContactForm.vue';
 import RealFoot from './components/RealFoot.vue';
+import SucessfullAcademy from './components/SucessfullAcademy.vue';
 
 export default {
   components: {
@@ -27,7 +29,8 @@ export default {
     PhotoGallery,
     MapLocation,
     ContactForm,
-    RealFoot
+    RealFoot,
+    SucessfullAcademy
   }
 };
 </script>
