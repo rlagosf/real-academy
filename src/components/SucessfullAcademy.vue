@@ -3,13 +3,13 @@
     <img src="/real-academy-fc/logo-en-blanco.png" alt="Logo de la Academia" />
     <h2>¡Formulario Enviado!</h2>
     <p>Gracias por contactarnos. Nos pondremos en contacto contigo pronto.</p>
-    <router-link to="/">Volver al Inicio de RAFC</router-link>
+    <router-link to="/">Volver al Inicio</router-link> <!-- Si no estás usando rutas, puedes cambiar esto -->
   </div>
 </template>
 
 <script>
 export default {
-  name: 'SucessfullAcademy'
+  name: 'SucessfullAcademy',
 };
 </script>
 

@@ -5,9 +5,8 @@
     <PhotoGallery />
     <AboutUs />
     <MapLocation />
-    <ContactForm />
+    <ContactForm /> <!-- Aquí está el formulario -->
     <RealFoot />
-    <SucessfullAcademy />
   </div>
 </template>
 
@@ -19,7 +18,6 @@ import PhotoGallery from './components/PhotoGallery.vue';
 import MapLocation from './components/MapLocation.vue';
 import ContactForm from './components/ContactForm.vue';
 import RealFoot from './components/RealFoot.vue';
-import SucessfullAcademy from './components/SucessfullAcademy.vue';
 
 export default {
   components: {
@@ -30,18 +28,16 @@ export default {
     MapLocation,
     ContactForm,
     RealFoot,
-    SucessfullAcademy
-  }
+  },
 };
 </script>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 
-
 body {
   margin: 0;
-  font-family: 'Bebas Neue', sans-serif; /* Aplica Bebas Neue como la fuente global */
+  font-family: 'Bebas Neue', sans-serif;
   color: #333;
   background-color: #FFF;
 }
