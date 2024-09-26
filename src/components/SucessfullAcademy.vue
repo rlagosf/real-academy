@@ -1,25 +1,33 @@
 <template>
-  <div class="success">
-    <img src="/real-academy-fc/logo-en-blanco.png" alt="Logo de la Academia" />
-    <h2>¡Formulario Enviado!</h2>
-    <p>Gracias por contactarnos. Nos pondremos en contacto contigo pronto.</p>
-    <router-link to="/">Volver al Inicio</router-link> <!-- Si no estás usando rutas, puedes cambiar esto -->
+  <div class="success-container">
+    <h2>¡Solicitud Enviada con Éxito!</h2>
+    <p>Gracias por contactarnos. Serás redirigido a la página de inicio en unos momentos.</p>
   </div>
 </template>
 
 <script>
 export default {
   name: 'SucessfullAcademy',
+  mounted() {
+    setTimeout(() => {
+      // Redirigir a la página de inicio sin recargar la página completa, usando Vue Router
+      this.$router.push('/'); // Redirige a la página de inicio en la misma ventana sin recargar
+    }, 3000); // Espera 3 segundos antes de redirigir
+  }
 };
 </script>
 
 <style scoped>
-.success {
+.success-container {
   text-align: center;
-  padding: 60px;
+  padding: 50px;
 }
 
-img {
-  max-width: 200px;
+h2 {
+  color: #FF007F;
+}
+
+p {
+  color: #333;
 }
 </style>
