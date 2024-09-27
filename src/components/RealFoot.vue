@@ -1,20 +1,20 @@
 <template>
-  <footer class="real-foot">
+  <footer class="real-foot" ref="footer">
     <div class="social-icons">
       <!-- Enlace a WhatsApp -->
-      <a :href="whatsappLink" target="_blank" rel="noopener noreferrer">
+      <a :href="whatsappLink" target="_blank" rel="noopener noreferrer" class="social-icon">
         <i class="fab fa-whatsapp"></i>
       </a>
       <!-- Enlace a Instagram -->
-      <a :href="instagramLink" target="_blank" rel="noopener noreferrer">
+      <a :href="instagramLink" target="_blank" rel="noopener noreferrer" class="social-icon">
         <i class="fab fa-instagram"></i>
       </a>
       <!-- Alerta de Facebook (en construcción) -->
-      <a @click="showFacebookAlert" href="javascript:void(0)" rel="noopener noreferrer">
+      <a @click="showFacebookAlert" href="javascript:void(0)" rel="noopener noreferrer" class="social-icon">
         <i class="fab fa-facebook-f"></i>
       </a>
       <!-- Enlace a LinkedIn -->
-      <a :href="linkedinLink" target="_blank" rel="noopener noreferrer">
+      <a :href="linkedinLink" target="_blank" rel="noopener noreferrer" class="social-icon">
         <i class="fab fa-linkedin"></i>
       </a>
     </div>
@@ -32,6 +32,22 @@ export default {
       linkedinLink: 'https://www.linkedin.com/in/rodrigo-lagos-fernandez-403a33173/' // Enlace al perfil de LinkedIn
     };
   },
+  mounted() {
+    const footer = this.$refs.footer.querySelector('.social-icons');
+
+    // IntersectionObserver para aplicar animaciones al scrollear
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        } else {
+          entry.target.classList.remove('visible');
+        }
+      });
+    });
+
+    observer.observe(footer);
+  },
   methods: {
     // Método para mostrar alerta de Facebook
     showFacebookAlert() {
@@ -43,33 +59,32 @@ export default {
 
 <style scoped>
 .real-foot {
-  padding: 20px; /* Espaciado interno del footer */
-  background-color: #000; /* Color de fondo del footer */
-  color: white; /* Color del texto */
-  text-align: center; /* Centra el contenido dentro del footer */
+  padding: 20px;
+  background-color: #000;
+  color: white;
+  text-align: center;
 }
 
 .social-icons {
-  display: flex; /* Utiliza flexbox para alinear los iconos horizontalmente */
-  justify-content: center; /* Centra los iconos dentro del footer */
-  gap: 60px; /* Aumenta el espacio entre los iconos */
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.social-icons.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .social-icons a {
-  color: white; /* Color de los iconos */
-  font-size: 2.8em; /* Tamaño de los iconos */
+  color: white;
+  font-size: 2.8em;
 }
 
 .social-icons a:hover {
-  color: #FF007F; /* Cambia el color del icono al pasar el mouse */
-}
-
-/* Información de contacto adicional (si se requiere en el futuro) */
-.contact-info {
-  margin-top: 10px; /* Espacio adicional para la información de contacto */
-}
-
-.contact-info a {
-  color: #FF007F; /* Color para el número de WhatsApp */
+  color: #FF007F;
 }
 </style>

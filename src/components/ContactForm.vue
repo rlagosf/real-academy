@@ -1,5 +1,5 @@
 <template>
-  <section class="contact-form" id="contact">
+  <section class="contact-form" id="contact" ref="contactSection">
     <h2>Contáctanos</h2>
     
     <!-- Mostrar formulario si no está cargando ni enviado con éxito -->
@@ -10,6 +10,7 @@
         placeholder="Nombre" 
         required 
         @input="validateName" 
+        ref="formInputs"
       />
       <input 
         type="tel" 
@@ -19,26 +20,30 @@
         pattern="[0-9]*" 
         maxlength="9" 
         @input="validatePhone" 
+        ref="formInputs"
       />
       <input 
         type="text" 
         v-model="form.address" 
         placeholder="Dirección" 
         required 
+        ref="formInputs"
       />
       <input 
         type="email" 
         v-model="form.email" 
         placeholder="Correo Electrónico" 
         required 
+        ref="formInputs"
       />
-      <select v-model="form.source" required>
+      <select v-model="form.source" required ref="formInputs">
         <option disabled value="">¿Cómo conociste la academia?</option>
         <option value="social">Redes Sociales</option>
         <option value="recommendation">Recomendación</option>
         <option value="other">Otros</option>
       </select>
-      <button type="submit">Enviar</button>
+      <!-- Añadido ref para el botón -->
+      <button type="submit" ref="formButton" class="form-button">Enviar</button>
     </form>
 
     <!-- Componente de loading mientras se envía el formulario -->
@@ -53,7 +58,7 @@
     </div>
 
     <!-- Mostrar mensaje de éxito si el formulario se envió correctamente -->
-    <div v-if="formSuccess" class="success-message">
+    <div v-if="formSuccess" class="success-message visible"> <!-- Agrega la clase visible -->
       <img src="/real-academy-fc/logo-en-blanco.png" alt="Logo de la Academia" />
       <h2>¡Formulario Enviado!</h2>
       <p>Gracias por contactarnos. Nos pondremos en contacto contigo pronto.</p>
@@ -83,40 +88,46 @@ export default {
   },
   methods: {
     async submitForm() {
-      try {
-        this.isLoading = true;  // Mostrar el componente de loading
+  try {
+    this.isLoading = true;  // Mostrar el componente de loading
 
-        // Convertir los datos del formulario a mayúsculas
-        const upperCaseForm = {
-          name: this.form.name.toUpperCase(),
-          phone: this.form.phone,
-          address: this.form.address.toUpperCase(),
-          email: this.form.email.toUpperCase(),
-          source: this.form.source.toUpperCase(),
-        };
+    // Convertir los datos del formulario a mayúsculas
+    const upperCaseForm = {
+      name: this.form.name.toUpperCase(),
+      phone: this.form.phone,
+      address: this.form.address.toUpperCase(),
+      email: this.form.email,
+      source: this.form.source.toUpperCase(),
+    };
 
-        const response = await axios.post('http://localhost:3000/api/contact', upperCaseForm);
+    const response = await axios.post('http://localhost:3000/api/contact', upperCaseForm);
 
-        // Si el servidor responde con éxito, mostrar el mensaje de éxito
-        if (response.status === 201) {
-          setTimeout(() => {
-            this.isLoading = false;
-            this.formSuccess = true;
-            // Redirigir a la página de inicio después de unos segundos
-            setTimeout(() => {
-              location.reload(); // Recargar la misma página
-            }, 3000);  // Esperar 3 segundos
-          }, 2000);  // Tiempo de simulación del loading
-        } else {
-          alert('Hubo un problema al enviar el formulario, intenta nuevamente.');
-          this.isLoading = false;
-        }
-      } catch (error) {
-        console.error('Error al enviar el formulario:', error);
-        alert('Hubo un error al enviar el formulario. Por favor, revisa los datos e intenta de nuevo.');
-        this.isLoading = false;
-      }
-    },
+    // Si el servidor responde con éxito, mostrar el mensaje de éxito
+    if (response.status === 201) {
+      setTimeout(() => {
+        this.isLoading = false; // Ocultar el componente de loading
+        this.formSuccess = true; // Mostrar mensaje de éxito
+        // Redirigir a la página de inicio después de unos segundos
+        setTimeout(() => {
+          window.scrollTo(0,0);
+          location.reload(); // Recargar la misma página
+        }, 3000);  // Esperar 3 segundos para mostrar el mensaje de éxito
+      }, 2000);  // Tiempo de simulación del loading
+    } else {
+      alert('Hubo un problema al enviar el formulario, intenta nuevamente.');
+      this.isLoading = false;
+    }
+  } catch (error) {
+    console.error('Error al enviar el formulario:', error);
+    alert('Hubo un error al enviar el formulario. Por favor, revisa los datos e intenta de nuevo.');
+    this.isLoading = false;
+  }
+},
+showSuccessMessage() {
+  setTimeout(() => {
+    this.$refs.successMessage.classList.add('visible'); // Agrega la clase visible para animación
+  }, 100); // Espera 100ms antes de añadir la clase visible
+},
     validatePhone() {
       // Asegúrate de que solo se ingresen números y que no exceda 9 dígitos
       this.form.phone = this.form.phone.replace(/[^0-9]/g, '').slice(0, 9);
@@ -139,7 +150,28 @@ export default {
       this.formSuccess = false;
       this.isLoading = false;
     }
-  }
+  },
+  mounted() {
+  // Obtener todos los elementos de entrada y el botón en la sección de contacto
+  const contactElements = this.$refs.contactSection.querySelectorAll('input, select, button, .success-message');
+
+  // Configuración del IntersectionObserver para activar las animaciones
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible'); // Añade clase visible cuando está en pantalla
+      } else {
+        entry.target.classList.remove('visible'); // Elimina clase cuando sale de pantalla
+      }
+    });
+  });
+
+  // Observar cada elemento de entrada y el botón
+  contactElements.forEach((item) => {
+    observer.observe(item);
+  });
+},
+
 };
 </script>
 
@@ -156,11 +188,41 @@ h2 {
   margin-bottom: 30px;
 }
 
+/* Animación para elementos visibles */
+input,
+select,
+button, /* Añadido el botón aquí */
+.success-message {
+  opacity: 0; /* Oculto inicialmente */
+  transform: translateY(20px); /* Desplazado inicialmente hacia abajo */
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out; /* Transición para opacidad y movimiento */
+}
+
+/* Clase visible para aplicar la animación */
+input.visible,
+select.visible,
+button.visible, /* Clase visible para el botón */
+.success-message.visible {
+  opacity: 1; /* Aparece */
+  transform: translateY(0); /* Posición original */
+}
+
 form {
   max-width: 500px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
+}
+
+.form-button {
+  opacity: 0; /* Oculto inicialmente */
+  transform: translateY(20px); /* Desplazado inicialmente hacia abajo */
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out; /* Transición para opacidad y movimiento */
+}
+
+.form-button.visible {
+  opacity: 1; /* Aparece */
+  transform: translateY(0); /* Posición original */
 }
 
 input,
@@ -249,4 +311,16 @@ button:hover {
   margin: 20px 0;
   color: #fff;
 }
+
+.success-message {
+  opacity: 0; /* Oculto inicialmente */
+  transform: translateY(20px); /* Desplazado inicialmente hacia abajo */
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out; /* Transición para opacidad y movimiento */
+}
+
+.success-message.visible {
+  opacity: 1; /* Aparece */
+  transform: translateY(0); /* Posición original */
+}
+  
 </style>

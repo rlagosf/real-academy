@@ -99,11 +99,7 @@ html {
   top: 0;
   z-index: 1000;
   box-sizing: border-box;
-  transition: background-color 0.5s ease;
-}
-
-.navigator.black-background {
-  background-color: #000; /* Cambia a negro */
+  transition: background-color 0.5s ease; /* Asegura que la transición sea suave */
 }
 
 .navigator.pink-background {
@@ -120,6 +116,7 @@ html {
   list-style: none;
   margin: 0;
   padding: 0;
+  transition: background-color 0.5s ease; /* Asegura que la transición sea suave */
 }
 
 .nav-links li {
@@ -135,11 +132,6 @@ html {
 
 .nav-links a:hover {
   color: #FF007F;
-}
-
-/* Cambia el color del texto a negro al pasar el cursor sobre los enlaces cuando la barra es rosada */
-.navigator.scrolled .nav-links a:hover {
-  color: black; /* Cambia a negro al hacer hover */
 }
 
 /* Estilos para el icono del menú */
@@ -174,11 +166,10 @@ html {
     position: absolute;
     top: 80px;
     right: 0;
-    background-color: transparent; /* Cambia a transparente */
     width: 100%;
     box-sizing: border-box;
     z-index: 999;
-    padding-left: 40px; /* Añade padding a la izquierda para alinearlo con el logo */
+    padding-left: 42px;
   }
 
   .nav-links.nav-links--active {
@@ -190,20 +181,8 @@ html {
     padding: 10px 0; /* Ajusta el padding verticalmente si es necesario */
   }
 
-  .navigator.scrolled .nav-links {
-    background-color: #FF007F; /* Cambia a rosado */
-  }
-
-  .nav-links.nav-links--active a {
-    color: white;
-  }
-
-  .navigator.scrolled .nav-links.nav-links--active a {
-    color: black; /* Cambia el color a negro */
-  }
-
-  .navigator.scrolled .nav-links a:hover {
-    color: black; /* Cambia a negro al pasar el cursor */
+  .navigator.pink-background .nav-links {
+    background-color: #FF007F; /* Asegura que el fondo cambie junto con el navigator */
   }
 }
 
@@ -218,3 +197,5 @@ html {
   }
 }
 </style>
+
+

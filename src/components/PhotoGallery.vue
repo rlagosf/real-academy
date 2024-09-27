@@ -2,19 +2,20 @@
   <div class="container" id="gallery">
     <div class="slider">
       <div class="slide-track">
-        <!-- Duplicar las imágenes para evitar el lapso en blanco -->
         <div class="slide" v-for="(image, index) in imageUrls.concat(imageUrls)" :key="'first-' + index">
           <img :src="image" @click="openModal(image)" alt="" />
         </div>
       </div>
     </div>
     <div v-if="modalVisible" class="modal-overlay" @click="closeModal">
-      <div class="modal-content" @click.stop>
+      <div class="modal-content fade-in" @click.stop>
+        <span class="close" @click="closeModal">&times;</span> <!-- Botón de cerrar -->
         <img :src="modalImage" alt="" />
       </div>
     </div>
   </div>
 </template>
+
 
 <script>
 export default {
@@ -79,8 +80,8 @@ body {
 }
 
 .slide img {
-  height: 300px; /* Ajusta la altura de las imágenes */
-  width: 300px; /* Ajusta el ancho de las imágenes para que sean cuadradas */
+  height: 350px; /* Ajusta la altura de las imágenes */
+  width: 350px; /* Ajusta el ancho de las imágenes para que sean cuadradas */
   cursor: pointer; /* Cambia el cursor para indicar que es clicable */
   transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave para el zoom y el borde */
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Borde difuminado entre las imágenes */
@@ -108,6 +109,32 @@ body {
   align-items: center; /* Alinea verticalmente al centro */
   justify-content: center; /* Alinea horizontalmente al centro */
   z-index: 1000; /* Asegura que el modal esté sobre todo el contenido */
+  opacity: 0; /* Inicialmente oculto */
+  animation: fadeIn 0.5s forwards; /* Añadir animación de entrada */
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1; /* Se vuelve completamente visible */
+  }
+}
+
+.modal-content {
+  position: relative; /* Necesario para el botón de cerrar */
+}
+
+.close {
+  position: absolute; /* Colocar el botón en la esquina superior derecha */
+  top: 10px;
+  right: 20px;
+  font-size: 24px; /* Tamaño del icono de cerrar */
+  color: white; /* Color del icono de cerrar */
+  cursor: pointer; /* Cambiar cursor al pasar por encima */
+  transition: transform 0.3s ease; /* Transición suave para el efecto de zoom */
+}
+
+.close:hover {
+  transform: scale(1.2); /* Aumenta el tamaño del icono al pasar el puntero */
 }
 
 .modal-content img {
