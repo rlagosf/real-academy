@@ -116,7 +116,7 @@ html {
   list-style: none;
   margin: 0;
   padding: 0;
-  transition: background-color 0.5s ease; /* Asegura que la transición sea suave */
+  transition: background-color 0.5s ease, color 0.5s ease; /* Asegura que la transición sea suave */
 }
 
 .nav-links li {
@@ -124,14 +124,18 @@ html {
 }
 
 .nav-links a {
-  color: white;
+  color: white; /* Color blanco por defecto */
   text-decoration: none;
   font-size: 1.1em;
   transition: color 0.3s ease;
 }
 
 .nav-links a:hover {
-  color: #FF007F;
+  color: #FF007F; /* Hover rosado por defecto */
+}
+
+.navigator.pink-background .nav-links a:hover {
+  color: black; /* Hover negro cuando el fondo es rosado */
 }
 
 /* Estilos para el icono del menú */
@@ -184,6 +188,10 @@ html {
   .navigator.pink-background .nav-links {
     background-color: #FF007F; /* Asegura que el fondo cambie junto con el navigator */
   }
+
+  .navigator.pink-background .nav-links a:hover {
+    color: black; /* Hover negro en dispositivos móviles cuando el fondo es rosado */
+  }
 }
 
 @media (min-width: 769px) {
@@ -197,5 +205,7 @@ html {
   }
 }
 </style>
+
+
 
 
