@@ -13,6 +13,7 @@ const routes = [
 // Crea la instancia del router
 const router = createRouter({
   history: createWebHistory(),
+  // @ts-ignore
   routes,
 });
 

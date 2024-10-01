@@ -33,6 +33,7 @@ export default {
     };
   },
   mounted() {
+    // @ts-ignore
     const footer = this.$refs.footer.querySelector('.social-icons');
 
     // IntersectionObserver para aplicar animaciones al scrollear
