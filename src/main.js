@@ -1,7 +1,9 @@
+// main.js
 import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router'; // Esto debería ser correcto
 import VueGoogleMaps from '@fawmi/vue-google-maps';
+// @ts-ignore
 import { LazyLoadImagePlugin } from 'vue-lazyload-image'; // Importar el plugin
 
 // Crear la aplicación

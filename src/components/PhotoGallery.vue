@@ -31,16 +31,24 @@ export default {
     };
   },
   async created() {
-    // Aquí debes obtener las URLs de las imágenes, por ejemplo, desde una API
-    this.imageUrls = await this.fetchImageUrls(); // Llama a la función para obtener las URLs
+    try {
+      // Aquí debes obtener las URLs de las imágenes, por ejemplo, desde una API
+      this.imageUrls = await this.fetchImageUrls(); // Llama a la función para obtener las URLs
+      if (!this.imageUrls.length) {
+        throw new Error("No se encontraron imágenes.");
+      }
+    } catch (error) {
+      console.error("Error al cargar las imágenes:", error);
+    }
   },
   methods: {
     async fetchImageUrls() {
       // Implementa la lógica para obtener las URLs de las imágenes
       const totalImages = 50; // Cambia este número según el total de imágenes que tengas
-      return Array.from({ length: totalImages }, (_, i) =>
+      const urls = Array.from({ length: totalImages }, (_, i) =>
         `/real-academy-fc/fotos-real/foto-real-facup-${i + 1}.jpeg` // Asegúrate de que la URL sea correcta para todas las imágenes
       );
+      return urls; // Retorna el array de URLs
     },
     openModal(imageUrl) {
       this.modalImage = imageUrl; // Asigna la URL de la imagen al modal
@@ -49,6 +57,7 @@ export default {
     },
     closeModal() {
       this.modalVisible = false; // Oculta el modal
+      this.modalImage = null; // Limpia la imagen del modal
       document.body.style.overflow = ''; // Reactiva el scroll del sitio web
     }
   }
