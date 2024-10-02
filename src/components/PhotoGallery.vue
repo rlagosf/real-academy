@@ -2,20 +2,23 @@
   <div class="container" id="gallery">
     <div class="slider">
       <div class="slide-track">
-        <div class="slide" v-for="(image, index) in imageUrls.concat(imageUrls)" :key="'first-' + index">
+        <div
+          class="slide"
+          v-for="(image, index) in imageUrls.concat(imageUrls)"
+          :key="'first-' + index"
+        >
           <img :src="image" @click="openModal(image)" alt="" />
         </div>
       </div>
     </div>
     <div v-if="modalVisible" class="modal-overlay" @click="closeModal">
       <div class="modal-content fade-in" @click.stop>
-        <span class="close" @click="closeModal">&times;</span> <!-- Botón de cerrar -->
+        <span class="close" @click="closeModal">&times;</span>
         <img :src="modalImage" alt="" />
       </div>
     </div>
   </div>
 </template>
-
 
 <script>
 export default {
@@ -25,7 +28,7 @@ export default {
       imageUrls: [], // Aquí se almacenarán las URLs de las imágenes
       modalVisible: false, // Controla la visibilidad del modal
       modalImage: null // Almacena la URL de la imagen que se muestra en el modal
-    }
+    };
   },
   async created() {
     // Aquí debes obtener las URLs de las imágenes, por ejemplo, desde una API
@@ -33,9 +36,11 @@ export default {
   },
   methods: {
     async fetchImageUrls() {
-      // Implementa la lógica para obtener las URLs de las imágenes, por ejemplo, desde una API
-      const totalImages = 30; // Cambia este número según el total de imágenes que tengas
-      return Array.from({ length: totalImages }, (_, i) => `/real-academy-fc/fotos-real/foto-real-facup-${i + 1}.jpeg`);
+      // Implementa la lógica para obtener las URLs de las imágenes
+      const totalImages = 50; // Cambia este número según el total de imágenes que tengas
+      return Array.from({ length: totalImages }, (_, i) =>
+        `/real-academy-fc/fotos-real/foto-real-facup-${i + 1}.jpeg` // Asegúrate de que la URL sea correcta para todas las imágenes
+      );
     },
     openModal(imageUrl) {
       this.modalImage = imageUrl; // Asigna la URL de la imagen al modal
@@ -61,7 +66,7 @@ body {
 
 @keyframes scroll {
   0% { transform: translateX(0); }
-  100% { transform: translateX(calc(-400px * 30)) } /* Animación que mueve las imágenes hacia la izquierda */
+  100% { transform: translateX(calc(-400px * 50)); } /* Ajusta según la cantidad de imágenes */
 }
 
 .slider {
@@ -76,7 +81,7 @@ body {
 .slide-track {
   animation: scroll 80s linear infinite; /* Animación que hace que el carrusel se desplace de forma continua */
   display: flex; /* Utiliza flexbox para alinear las imágenes en fila */
-  width: calc(300px * 60); /* Establece el ancho total de la pista del carrusel */
+  width: calc(300px * 100); /* Ajusta el ancho total de la pista del carrusel */
 }
 
 .slide img {

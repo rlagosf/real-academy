@@ -2,6 +2,7 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router'; // Esto debería ser correcto
 import VueGoogleMaps from '@fawmi/vue-google-maps';
+import { LazyLoadImagePlugin } from 'vue-lazyload-image'; // Importar el plugin
 
 // Crear la aplicación
 const app = createApp(App);
@@ -15,6 +16,9 @@ app.use(VueGoogleMaps, {
     key: '.-p3nt4k1lL',  // Asegúrate de usar la clave correcta
   },
 });
+
+// Configurar y usar el plugin de Lazy Load
+app.use(LazyLoadImagePlugin); // Añadir esta línea para registrar el plugin
 
 // Montar la aplicación en el DOM
 app.mount('#app');
