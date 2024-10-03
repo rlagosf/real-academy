@@ -46,7 +46,7 @@ export default {
       // Implementa la lógica para obtener las URLs de las imágenes
       const totalImages = 50; // Cambia este número según el total de imágenes que tengas
       const urls = Array.from({ length: totalImages }, (_, i) =>
-        `/real-academy-fc/fotos-real/foto-real-facup-${i + 1}.jpeg` // Asegúrate de que la URL sea correcta para todas las imágenes
+        `/assets/images/foto-real-facup-${i + 1}.jpeg` // Asegúrate de que la URL sea correcta para todas las imágenes
       );
       return urls; // Retorna el array de URLs
     },

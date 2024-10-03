@@ -12,12 +12,12 @@
 
       <!-- Segunda sección: Logo o imagen -->
       <div class="grid-item image">
-        <img src="/real-academy-fc/logo-en-blanco.png" alt="Logo Real Academy FC" class="responsive-img" />
+        <img src="/assets/logos/logo-en-blanco.png" alt="Logo Real Academy FC" class="responsive-img" />
       </div>
 
       <!-- Tercera sección: Otra imagen o logo adicional -->
       <div class="grid-item image">
-        <img src="/real-academy-fc/RC CUP.jpeg" alt="Equipo Real Academy FC" class="responsive-img" />
+        <img src="assets/others/rc-cup.jpeg" alt="Equipo Real Academy FC" class="responsive-img" />
       </div>
 
       <!-- Cuarta sección: Título y Contenido adicional -->

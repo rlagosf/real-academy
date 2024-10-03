@@ -1,7 +1,7 @@
 <template>
   <nav class="navigator" :class="{ 'scrolled': isScrolled, 'black-background': isBlackBackground, 'pink-background': isPinkBackground }">
     <div class="logo">
-      <img src="/real-academy-fc/logo-en-blanco.png" alt="Real Academy Logo" />
+      <img src="/assets/logos/logo-en-blanco.png" class="logo" alt="Logo" />
     </div>
     <div class="menu-toggle" @click="toggleMenu">
       <span class="menu-icon"></span>
