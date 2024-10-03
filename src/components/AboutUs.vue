@@ -37,23 +37,30 @@
 export default {
   name: 'AboutUs',
   mounted() {
-    // Obtener todos los elementos hijos de la sección con la clase grid-item
-    const gridItems = this.$refs.aboutSection.querySelectorAll('.grid-item');
+    // Usa nextTick para asegurar que el DOM esté completamente cargado
+    this.$nextTick(() => {
+      const aboutSection = this.$refs.aboutSection;
+      
+      if (aboutSection) {
+        // @ts-ignore
+        const gridItems = aboutSection.querySelectorAll('.grid-item');
 
-    // Configuración del IntersectionObserver para activar las animaciones
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible'); // Añade clase visible cuando está en pantalla
-        } else {
-          entry.target.classList.remove('visible'); // Elimina clase cuando sale de pantalla
-        }
-      });
-    });
+        // Configuración del IntersectionObserver para activar las animaciones
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible'); // Añade clase visible cuando está en pantalla
+            } else {
+              entry.target.classList.remove('visible'); // Elimina clase cuando sale de pantalla
+            }
+          });
+        });
 
-    // Observar cada elemento grid-item
-    gridItems.forEach((item) => {
-      observer.observe(item);
+        // Observar cada elemento grid-item
+        gridItems.forEach((item) => {
+          observer.observe(item);
+        });
+      }
     });
   },
 };

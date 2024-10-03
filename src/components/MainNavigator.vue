@@ -33,6 +33,7 @@ export default {
     },
     handleScroll() {
       const currentScroll = window.scrollY;
+      // @ts-ignore
       const videoHeight = document.querySelector('.video-background').offsetHeight;
       
       // Ajusta los umbrales

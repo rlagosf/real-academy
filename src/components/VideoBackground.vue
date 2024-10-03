@@ -8,6 +8,8 @@
       muted
       loop
       class="background-video"
+      @loadeddata="onVideoLoaded"
+      @ended="onVideoEnded"
     >
       <source :src="video" type="video/mp4" />
       Your browser does not support the video tag.
@@ -24,14 +26,14 @@ export default {
   name: 'VideoBackground',
   data() {
     return {
-      videoUrls: [], // URLs de los videos de fondo
+      videoUrls: [],
       currentIndex: 0,
       videoDuration: 10, // Duración en segundos de cada video
     };
   },
   async created() {
-    this.videoUrls = await this.fetchVideoUrls(); // Obtiene las URLs de los videos
-    this.startVideoCycle(); // Inicia el ciclo de cambio de videos
+    this.videoUrls = await this.fetchVideoUrls();
+    this.startVideoCycle();
   },
   methods: {
     async fetchVideoUrls() {
@@ -42,6 +44,18 @@ export default {
       setInterval(() => {
         this.currentIndex = (this.currentIndex + 1) % this.videoUrls.length;
       }, this.videoDuration * 1000); // Cambia el video cada 10 segundos
+    },
+    onVideoEnded() {
+      // Cuando el video termina, se libera la memoria del video actual
+      const currentVideo = this.$refs.video[this.currentIndex];
+      if (currentVideo) {
+        currentVideo.pause(); // Pausa el video actual
+        currentVideo.currentTime = 0; // Reinicia el tiempo de reproducción
+      }
+    },
+    onVideoLoaded() {
+      // Esta función se ejecuta cuando un video ha terminado de cargar
+      // Puedes implementar aquí lógica adicional si es necesario
     },
   },
 };

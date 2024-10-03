@@ -100,7 +100,7 @@ body {
   transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave para el zoom y el borde */
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Borde difuminado entre las imágenes */
   margin: 20px; /* Separación horizontal entre las imágenes */
-  border-radius: 50%; /* Hace que las imágenes sean completamente redondas */
+  border-radius: 45px 45px 45px 45px; /* Hace que las imágenes sean completamente redondas */
   object-fit: cover; /* Ajusta la imagen dentro del contenedor circular sin perder proporción */
   position: relative; /* Posicionamiento relativo para ajustar el vertical */
   top: 100px; /* Baja las imágenes un poco más para centrar visualmente */
