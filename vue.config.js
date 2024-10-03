@@ -5,6 +5,7 @@ module.exports = defineConfig({
   publicPath: process.env.NODE_ENV === 'production'
     ? '/real-academy/'  // Asegúrate de que coincida con el nombre del repositorio
     : '/',
+  assetsDir: 'static', // Especifica un directorio para archivos estáticos (opcional)
   
   configureWebpack: {
     plugins: [
@@ -14,5 +15,29 @@ module.exports = defineConfig({
         __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false
       })
     ]
+  },
+  
+  chainWebpack: config => {
+    // Permitir la carga de videos
+    config.module
+      .rule('videos')
+      .test(/\.(mp4|webm|ogg|mp3|wav|flac|aac)$/)
+      .use('file-loader')
+      .loader('file-loader')
+      .options({
+        name: '[name].[hash:8].[ext]', // Modifica esto según sea necesario
+        outputPath: 'videos/', // Cambia esto si tienes una carpeta específica para videos
+      });
+    
+    // Permitir la carga de imágenes
+    config.module
+      .rule('images')
+      .test(/\.(png|jpe?g|gif|svg)(\?.*)?$/)
+      .use('file-loader')
+      .loader('file-loader')
+      .options({
+        name: '[name].[hash:8].[ext]', // Modifica esto según sea necesario
+        outputPath: 'images/', // Cambia esto si tienes una carpeta específica para imágenes
+      });
   }
 });
