@@ -76,6 +76,7 @@ export default {
   top: 0;
   left: 0;
   transition: opacity 1s ease;
+  filter: grayscale(0.6) brightness(0.8); /* Aplica un filtro de escala de grises y ajuste de brillo */
 }
 
 .overlay {
