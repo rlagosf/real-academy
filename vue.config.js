@@ -3,11 +3,13 @@ const webpack = require('webpack');
 
 module.exports = defineConfig({
   transpileDependencies: true,
-  publicPath: process.env.NODE_ENV === 'production'
-    ? '/real-academy/' // Asegúrate de que coincida con el nombre del repositorio
-    : '/',
-  assetsDir: 'static', // Especifica un directorio para archivos estáticos (opcional)
-  
+
+  // Cambia el publicPath para Vercel
+  publicPath: process.env.NODE_ENV === 'production' ? '/' : '/',
+
+  // Opcional: Puedes especificar un directorio para archivos estáticos
+  assetsDir: 'static',
+
   configureWebpack: {
     plugins: [
       new webpack.DefinePlugin({
@@ -17,7 +19,7 @@ module.exports = defineConfig({
       })
     ]
   },
-  
+
   chainWebpack: config => {
     // Permitir la carga de videos
     config.module
@@ -26,25 +28,25 @@ module.exports = defineConfig({
       .use('file-loader')
       .loader('file-loader')
       .options({
-        name: '[name].[hash:8].[ext]', // Modifica esto según sea necesario
-        outputPath: 'videos/', // Cambia esto si tienes una carpeta específica para videos
+        name: '[name].[hash:8].[ext]',
+        outputPath: 'videos/',
       });
-    
-    // Permitir la carga de imágenes
+
+    // Permitir la carga de imágenes, incluyendo .webp
     config.module
       .rule('images')
-      .test(/\.(png|jpe?g|gif|svg)(\?.*)?$/)
+      .test(/\.(png|jpe?g|gif|svg|webp)(\?.*)?$/)
       .use('file-loader')
       .loader('file-loader')
       .options({
-        name: '[name].[hash:8].[ext]', // Modifica esto según sea necesario
-        outputPath: 'images/', // Cambia esto si tienes una carpeta específica para imágenes
+        name: '[name].[hash:8].[ext]',
+        outputPath: 'images/',
       });
 
     // Permitir la carga de archivos estáticos en general
     config.module
       .rule('static-files')
-      .test(/\.(png|jpe?g|gif|svg|mp4|webm|ogg|mp3|wav|flac|aac)$/) // Añadido para cargar todos los tipos
+      .test(/\.(png|jpe?g|gif|svg|mp4|webm|ogg|mp3|wav|flac|aac|webp)$/)
       .use('file-loader')
       .loader('file-loader')
       .options({
