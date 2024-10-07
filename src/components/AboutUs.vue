@@ -96,15 +96,15 @@ export default {
 
 /* Contenedor para las tarjetas */
 .cards-container {
-  display: flex;
-  justify-content: space-between; /* Espaciado uniforme entre tarjetas */
-  gap: 30px; /* Separación entre las tarjetas */
-  flex-wrap: wrap; /* Permite que las tarjetas se ajusten */
+  display: grid;
+  grid-template-columns: repeat(6, 1fr); /* Siempre 6 columnas */
+  gap: 30px; /* Espacio entre las tarjetas */
+  justify-items: stretch; /* Asegura que las tarjetas ocupen todo el ancho disponible */
+  width: 100%; /* Hace que el contenedor ocupe todo el ancho disponible */
 }
 
 /* Estilos para las tarjetas */
 .card {
-  flex: 1 1 15%; /* Permitir que las tarjetas ocupen el 15% del ancho del contenedor */
   max-width: 320px; /* Ancho máximo de la tarjeta */
   height: 450px; /* Altura de la tarjeta */
   border-radius: 15px;
@@ -112,91 +112,128 @@ export default {
   background-color: #1c1c1c; /* Fondo oscuro de la tarjeta */
   transition: transform 0.5s ease, opacity 0.5s ease; /* Transiciones suaves */
   cursor: pointer;
-}
-
-.card:hover {
-  transform: scale(1.1); /* Aumenta el tamaño de la tarjeta al pasar el puntero */
+  margin: 0 auto; /* Centrar la tarjeta en todas las pantallas */
+  position: relative;
 }
 
 /* Imagen de la tarjeta */
 .card-img {
-  width: 100%; /* Asegura que la imagen ocupe el 100% del ancho de la tarjeta */
-  height: 100%; /* Asegura que la imagen ocupe el 100% de la altura de la tarjeta */
-  object-fit: contain; /* Mantiene la proporción de la imagen sin cortarla */
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
   transition: opacity 0.5s ease; /* Transiciones suaves para la opacidad */
 }
 
-/* Disminución de tamaño solo para imágenes PNG */
 .png-image {
   transform: scale(1.0); /* Escala inicial para imágenes PNG */
-  transition: opacity 0.5s ease, transform 0.5s ease; /* Transiciones suaves para opacidad y transformación */
+  transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
 .card:hover .card-img {
-  opacity: 0.2; /* Mayor transparencia al hacer hover */
+  opacity: 0.2;
 }
 
-/* Disminuir tamaño de la imagen PNG al hacer hover */
 .card:hover .png-image {
-  transform: scale(0.95); /* Disminuir tamaño de la imagen PNG al hacer hover */
+  transform: scale(0.95);
 }
 
-/* Contenido de la tarjeta (oculto por defecto) */
+/* Contenido de la tarjeta */
 .card-content {
   position: absolute; /* Posiciona el contenido en la tarjeta */
-  top: 50%; /* Centra verticalmente */
-  left: 50%; /* Centra horizontalmente */
-  transform: translate(-50%, -50%); /* Ajusta la posición */
-  text-align: center; /* Centra el texto */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: #fff;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
   opacity: 0; /* Inicialmente oculto */
-  transition: opacity 0.5s ease; /* Transición suave para la opacidad */
-  color: #fff; /* Color del texto */
-  padding: 20px; /* Espacio alrededor del texto */
+  transition: opacity 0.5s ease;
+  pointer-events: none; /* Desactiva la interacción con el contenido */
 }
 
 .card:hover .card-content {
   opacity: 1; /* Se muestra el contenido al hacer hover */
+  pointer-events: auto; /* Activa la interacción solo cuando se hace hover */
 }
 
 .card-content h2 {
-  margin-bottom: 10px; /* Espacio inferior */
+  margin-bottom: 10px;
   font-size: 1.5em; /* Tamaño del título */
-  color: #ff007f; /* Color destacado para el título */
+  color: #ff007f;
 }
 
-/* Estilos para las listas de contenido */
+/* Estilos para las listas */
 .card-content ul {
-  list-style-type: disc; /* Usa viñetas (puntos) para la lista */
-  padding-left: 20px; /* Espacio a la izquierda para la lista */
-  margin: 0; /* Elimina el margen de la lista */
-  text-align: left; /* Alinea el texto a la izquierda */
-  color: #fff; /* Color del texto */
+  list-style-type: disc;
+  padding-left: 20px;
+  margin: 0;
+  text-align: left;
+  color: #fff;
 }
 
 .card-content p {
-  font-size: 1em; /* Tamaño del párrafo */
-  text-align: center; /* Centrado del texto */
+  font-size: 1em;
+  text-align: center;
 }
 
-/* Diseño responsivo para dispositivos pequeños */
+/* Ajustes responsive eliminando restricciones en el número de columnas */
+@media (max-width: 1200px) {
+  .cards-container {
+    grid-template-columns: repeat(6, 1fr); /* Forzar 6 columnas */
+  }
+}
+
 @media (max-width: 768px) {
   .cards-container {
-    flex-direction: column; /* Cambia a una columna en pantallas pequeñas */
-    align-items: center; /* Centra las tarjetas */
+    grid-template-columns: repeat(6, 1fr); /* Forzar 6 columnas */
   }
 
-  .card {
-    width: 100%; /* Ancho del 100% en pantallas pequeñas */
-    height: auto; /* Altura automática para mantener proporciones */
-    max-width: 400px; /* Ancho máximo para tarjetas en pantallas pequeñas */
+  .card-content {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 
   .card-content h2 {
-    font-size: 1.2em; /* Tamaño del título en pantallas pequeñas */
+    font-size: 1.3em; /* Tamaño ajustado para tablets */
   }
 
-  .card-content p {
-    font-size: 0.9em; /* Tamaño del párrafo en pantallas pequeñas */
+  .card-content ul, .card-content p {
+    font-size: 0.9em; /* Tamaño de texto ajustado */
+  }
+}
+
+/* Para dispositivos móviles pequeños */
+@media (max-width: 480px) {
+  .cards-container {
+    grid-template-columns: repeat(6, 1fr); /* Forzar 6 columnas */
+  }
+
+  .card-content {
+    opacity: 0; /* Contenido inicialmente oculto */
+  }
+
+  .card:active .card-content {
+    opacity: 1; /* Mostrar contenido cuando se interactúa en móviles */
+  }
+
+  .card {
+    max-width: 100%; /* Asegura que las tarjetas ocupen todo el ancho disponible */
+    height: auto; /* Ajusta la altura automáticamente */
+  }
+
+  .card-content h2 {
+    font-size: 1.2em; /* Tamaño de texto ajustado para pantallas pequeñas */
+  }
+
+  .card-content ul, .card-content p {
+    font-size: 0.85em; /* Tamaño de texto más pequeño en móviles */
   }
 }
 </style>
