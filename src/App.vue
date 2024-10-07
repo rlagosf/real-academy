@@ -1,11 +1,12 @@
 <template>
   <div id="app">
+    <BackgroundMusic />  <!-- Llamada al nuevo componente -->
     <MainNavigator />
     <VideoBackground />
     <PhotoGallery />
     <AboutUs />
     <MapLocation />
-    <ContactForm /> <!-- Aquí está el formulario -->
+    <ContactForm />
     <RealFoot />
   </div>
 </template>
@@ -18,6 +19,7 @@ import PhotoGallery from './components/PhotoGallery.vue';
 import MapLocation from './components/MapLocation.vue';
 import ContactForm from './components/ContactForm.vue';
 import RealFoot from './components/RealFoot.vue';
+import BackgroundMusic from './components/BackgroundMusic.vue';  // Importación del nuevo componente
 
 export default {
   components: {
@@ -28,7 +30,8 @@ export default {
     MapLocation,
     ContactForm,
     RealFoot,
-  },
+    BackgroundMusic,  // Registro del nuevo componente
+  }
 };
 </script>
 

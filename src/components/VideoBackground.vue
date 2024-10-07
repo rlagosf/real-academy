@@ -1,19 +1,21 @@
 <template>
   <section class="video-background" id="home">
-    <video
-      v-for="(video, index) in videoUrls"
-      :key="index"
-      v-show="currentIndex === index"
-      autoplay
-      muted
-      loop
-      class="background-video"
-      @loadeddata="onVideoLoaded"
-      @ended="onVideoEnded"
-    >
-      <source :src="video" type="video/mp4" />
-      Your browser does not support the video tag.
-    </video>
+    <div v-for="(video, index) in videoUrls" :key="index">
+      <video
+        v-show="currentIndex === index"
+        autoplay
+        muted
+        loop
+        class="background-video"
+        @loadeddata="onVideoLoaded"
+        @ended="onVideoEnded"
+        @contextmenu.prevent
+      >
+        <source :src="video.mp4" type="video/mp4" />
+        <source :src="video.webm" type="video/webm" />
+        Your browser does not support the video tag.
+      </video>
+    </div>
     <div class="overlay">
       <img src="/assets/logos/logo-en-blanco.png" class="logo" alt="Logo" />
       <h1>BIENVENIDOS a REAL ACADEMY FC</h1>
@@ -28,7 +30,7 @@ export default {
     return {
       videoUrls: [],
       currentIndex: 0,
-      videoDuration: 10, // Duración en segundos de cada video
+      videoDuration: 5, // Duración en segundos de cada video
     };
   },
   async created() {
@@ -38,16 +40,39 @@ export default {
   methods: {
     async fetchVideoUrls() {
       const totalVideos = 6; // Cambia esto según la cantidad de videos
-      return Array.from({ length: totalVideos }, (_, i) => `/assets/videos/video-${i + 1}.mp4`);
+      return Array.from({ length: totalVideos }, (_, i) => ({
+        mp4: `/assets/videos/video-${i + 1}.mp4`,
+        webm: `/assets/videos/video-${i + 1}.webm`, // Asegúrate de tener el archivo WebM
+      }));
     },
     startVideoCycle() {
-      setInterval(() => {
-        this.currentIndex = (this.currentIndex + 1) % this.videoUrls.length;
-      }, this.videoDuration * 1000); // Cambia el video cada 10 segundos
+      this.cycleVideos();
+    },
+    cycleVideos() {
+      const nextVideo = () => {
+        this.playCurrentVideo().then(() => {
+          setTimeout(() => {
+            this.currentIndex = (this.currentIndex + 1) % this.videoUrls.length;
+            nextVideo(); // Inicia el siguiente video
+          }, this.videoDuration * 1000); // Espera 5 segundos
+        });
+      };
+      nextVideo();
+    },
+    playCurrentVideo() {
+      return new Promise((resolve) => {
+        const currentVideo = this.$refs.video && this.$refs.video[this.currentIndex];
+        if (currentVideo) {
+          currentVideo.play(); // Inicia el video actual
+          currentVideo.onended = resolve; // Resuelve la promesa cuando el video termina
+        } else {
+          resolve(); // Si no hay video actual, resuelve la promesa
+        }
+      });
     },
     onVideoEnded() {
       // Cuando el video termina, se libera la memoria del video actual
-      const currentVideo = this.$refs.video[this.currentIndex];
+      const currentVideo = this.$refs.video && this.$refs.video[this.currentIndex];
       if (currentVideo) {
         currentVideo.pause(); // Pausa el video actual
         currentVideo.currentTime = 0; // Reinicia el tiempo de reproducción

@@ -97,7 +97,7 @@ export default {
 /* Contenedor para las tarjetas */
 .cards-container {
   display: grid;
-  grid-template-columns: repeat(6, 1fr); /* Siempre 6 columnas */
+  grid-template-columns: repeat(1, 1fr); /* 1 columna por defecto */
   gap: 30px; /* Espacio entre las tarjetas */
   justify-items: stretch; /* Asegura que las tarjetas ocupen todo el ancho disponible */
   width: 100%; /* Hace que el contenedor ocupe todo el ancho disponible */
@@ -182,58 +182,28 @@ export default {
   text-align: center;
 }
 
-/* Ajustes responsive eliminando restricciones en el número de columnas */
-@media (max-width: 1200px) {
-  .cards-container {
-    grid-template-columns: repeat(6, 1fr); /* Forzar 6 columnas */
-  }
-}
-
-@media (max-width: 768px) {
-  .cards-container {
-    grid-template-columns: repeat(6, 1fr); /* Forzar 6 columnas */
-  }
-
-  .card-content {
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-
-  .card-content h2 {
-    font-size: 1.3em; /* Tamaño ajustado para tablets */
-  }
-
-  .card-content ul, .card-content p {
-    font-size: 0.9em; /* Tamaño de texto ajustado */
-  }
-}
-
-/* Para dispositivos móviles pequeños */
+/* Ajustes responsive para las tarjetas */
 @media (max-width: 480px) {
   .cards-container {
-    grid-template-columns: repeat(6, 1fr); /* Forzar 6 columnas */
+    grid-template-columns: repeat(1, 1fr); /* 1 columna en móviles */
   }
+}
 
-  .card-content {
-    opacity: 0; /* Contenido inicialmente oculto */
+@media (min-width: 481px) and (max-width: 768px) {
+  .cards-container {
+    grid-template-columns: repeat(2, 1fr); /* 2 columnas en tablets */
   }
+}
 
-  .card:active .card-content {
-    opacity: 1; /* Mostrar contenido cuando se interactúa en móviles */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .cards-container {
+    grid-template-columns: repeat(3, 1fr); /* 3 columnas en pantallas más grandes */
   }
+}
 
-  .card {
-    max-width: 100%; /* Asegura que las tarjetas ocupen todo el ancho disponible */
-    height: auto; /* Ajusta la altura automáticamente */
-  }
-
-  .card-content h2 {
-    font-size: 1.2em; /* Tamaño de texto ajustado para pantallas pequeñas */
-  }
-
-  .card-content ul, .card-content p {
-    font-size: 0.85em; /* Tamaño de texto más pequeño en móviles */
+@media (min-width: 1025px) {
+  .cards-container {
+    grid-template-columns: repeat(6, 1fr); /* 6 columnas en pantallas grandes */
   }
 }
 </style>

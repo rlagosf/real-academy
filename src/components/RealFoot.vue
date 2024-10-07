@@ -18,6 +18,8 @@
         <i class="fab fa-linkedin"></i>
       </a>
     </div>
+    <!-- Texto de derechos reservados -->
+    <p class="rights-text">Todos los derechos reservados por Real Academy F.C</p>
   </footer>
 </template>
 
@@ -87,5 +89,11 @@ export default {
 
 .social-icons a:hover {
   color: #FF007F;
+}
+
+/* Estilos para el texto de derechos reservados */
+.rights-text {
+  margin-top: 10px; /* Espaciado superior */
+  font-size: 1em; /* Tamaño de fuente */
 }
 </style>
