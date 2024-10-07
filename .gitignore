@@ -2,6 +2,7 @@
 node_modules
 dist
 /dist
+dist/
 
 
 # local env files
@@ -30,4 +31,4 @@ pnpm-debug.log*
 *.mp4
 *.mov
 
-.vercel
+.vercel/
