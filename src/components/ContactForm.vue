@@ -125,6 +125,7 @@ export default {
 },
 showSuccessMessage() {
   setTimeout(() => {
+    // @ts-ignore
     this.$refs.successMessage.classList.add('visible'); // Agrega la clase visible para animación
   }, 100); // Espera 100ms antes de añadir la clase visible
 },
@@ -153,6 +154,7 @@ showSuccessMessage() {
   },
   mounted() {
   // Obtener todos los elementos de entrada y el botón en la sección de contacto
+  // @ts-ignore
   const contactElements = this.$refs.contactSection.querySelectorAll('input, select, button, .success-message');
 
   // Configuración del IntersectionObserver para activar las animaciones

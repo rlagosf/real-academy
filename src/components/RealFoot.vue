@@ -19,7 +19,7 @@
       </a>
     </div>
     <!-- Texto de derechos reservados -->
-    <p class="rights-text">Todos los derechos reservados por Real Academy F.C</p>
+    <p class="rights-text" ref="rightsText">Todos los derechos reservados por Real Academy F.C</p>
   </footer>
 </template>
 
@@ -37,6 +37,7 @@ export default {
   mounted() {
     // @ts-ignore
     const footer = this.$refs.footer.querySelector('.social-icons');
+    const rightsText = this.$refs.rightsText; // Seleccionamos el texto de derechos reservados
 
     // IntersectionObserver para aplicar animaciones al scrollear
     const observer = new IntersectionObserver((entries) => {
@@ -49,7 +50,10 @@ export default {
       });
     });
 
+    // Observar los iconos sociales y el texto de derechos reservados
     observer.observe(footer);
+    // @ts-ignore
+    observer.observe(rightsText);
   },
   methods: {
     // Método para mostrar alerta de Facebook
@@ -95,5 +99,13 @@ export default {
 .rights-text {
   margin-top: 10px; /* Espaciado superior */
   font-size: 1em; /* Tamaño de fuente */
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.rights-text.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 </style>

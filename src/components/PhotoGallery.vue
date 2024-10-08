@@ -1,7 +1,7 @@
 <template>
   <div class="container" id="gallery">
     <div class="slider">
-      <div class="slide-track">
+      <div class="slide-track" :class="{ paused: modalVisible }">
         <div
           class="slide"
           v-for="(image, index) in imageUrls.concat(imageUrls)"
@@ -12,6 +12,7 @@
             @click="openModal(image)" 
             alt="" 
             loading="lazy" 
+            class="imagen" 
           />
         </div>
       </div>
@@ -31,28 +32,28 @@ import { ref, onMounted } from 'vue';
 export default {
   name: 'PhotoGallery',
   setup() {
-    const imageUrls = ref([]); // Aquí se almacenarán las URLs de las imágenes
-    const modalVisible = ref(false); // Controla la visibilidad del modal
-    const modalImage = ref(null); // Almacena la URL de la imagen que se muestra en el modal
+    const imageUrls = ref([]);
+    const modalVisible = ref(false);
+    const modalImage = ref(null);
 
     const fetchImageUrls = async () => {
-      const totalImages = 42; // Cambia este número según el total de imágenes que tengas
+      const totalImages = 41;
       const urls = Array.from({ length: totalImages }, (_, i) =>
         `/assets/images/foto-real-facup-${i + 1}.webp`
       );
-      return urls; // Retorna el array de URLs
+      return urls;
     };
 
     const openModal = (imageUrl) => {
-      modalImage.value = imageUrl; // Asigna la URL de la imagen al modal
-      modalVisible.value = true; // Muestra el modal
-      document.body.style.overflow = 'hidden'; // Desactiva el scroll del sitio web
+      modalImage.value = imageUrl;
+      modalVisible.value = true;
+      document.body.style.overflow = 'hidden';
     };
 
     const closeModal = () => {
-      modalVisible.value = false; // Oculta el modal
-      modalImage.value = null; // Limpia la imagen del modal
-      document.body.style.overflow = ''; // Reactiva el scroll del sitio web
+      modalVisible.value = false;
+      modalImage.value = null;
+      document.body.style.overflow = '';
     };
 
     onMounted(async () => {
@@ -103,14 +104,18 @@ body {
 .slide-track {
   display: flex;
   width: calc(300px * 100);
-  animation: scroll 80s linear infinite;
+  animation: scroll 160s linear infinite; /* Carrusel más lento */
+}
+
+.slide-track.paused {
+  animation-play-state: paused; /* Pausar el carrusel */
 }
 
 .slide img {
   height: 350px;
   width: 350px;
   cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-radius 0.3s ease; /* Manteniendo la transición */
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   margin: 20px;
   border-radius: 45px;
@@ -119,9 +124,13 @@ body {
   top: 100px;
 }
 
-.slide img:hover {
-  transform: scale(1.1);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+.imagen:hover {
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  box-shadow: 0px 0px 15px 15px #FF007F;
+  -webkit-box-shadow: 0px 0px 15px 15px #FF007F;
+  /* transform: rotate(90deg);
+  -webkit-transform: rotate(360deg); */
 }
 
 .modal-overlay {
