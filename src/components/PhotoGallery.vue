@@ -8,8 +8,8 @@
           :key="'first-' + index"
         >
           <img 
-            :src="image" 
-            @click="openModal(image)" 
+            :src="image.lowRes"  
+            @click="openModal(image.original)"  
             alt="" 
             loading="lazy" 
             class="imagen" 
@@ -32,30 +32,37 @@ import { ref, onMounted } from 'vue';
 export default {
   name: 'PhotoGallery',
   setup() {
-    const imageUrls = ref([]);
+    const imageUrls = ref([]);  // Arreglo de objetos para almacenar imágenes
     const modalVisible = ref(false);
     const modalImage = ref(null);
 
+    // Función para obtener las URL de las imágenes
     const fetchImageUrls = async () => {
       const totalImages = 41;
-      const urls = Array.from({ length: totalImages }, (_, i) =>
-        `/assets/images/foto-real-facup-${i + 1}.webp`
-      );
+      const urls = Array.from({ length: totalImages }, (_, i) => ({
+        lowRes: `/assets/low-res/foto-real-facup-${i + 1}.webp`,  // Ruta de baja resolución
+        original: `/assets/images/foto-real-facup-${i + 1}.webp`,  // Ruta de la imagen original
+      }));
       return urls;
     };
 
+    // Función para abrir el modal
     const openModal = (imageUrl) => {
       modalImage.value = imageUrl;
       modalVisible.value = true;
       document.body.style.overflow = 'hidden';
     };
 
+    // Función para cerrar el modal
     const closeModal = () => {
-      modalVisible.value = false;
-      modalImage.value = null;
-      document.body.style.overflow = '';
+      requestAnimationFrame(() => {
+        modalVisible.value = false;
+        modalImage.value = null;
+        document.body.style.overflow = '';
+      });
     };
 
+    // Al montar el componente, obtener las URLs de las imágenes
     onMounted(async () => {
       try {
         imageUrls.value = await fetchImageUrls();
@@ -126,11 +133,7 @@ body {
 
 .imagen:hover {
   border-radius: 50%;
-  -webkit-border-radius: 50%;
   box-shadow: 0px 0px 15px 15px #FF007F;
-  -webkit-box-shadow: 0px 0px 15px 15px #FF007F;
-  /* transform: rotate(90deg);
-  -webkit-transform: rotate(360deg); */
 }
 
 .modal-overlay {
