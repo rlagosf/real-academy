@@ -2,7 +2,7 @@
     <div class="loading-container">
       <div class="loading-content">
         <img src="/real-academy-fc/logo-en-blanco.png" alt="Logo de la Academia" />
-        <p>Estamos cargando tu solicitud...</p>
+        <p>Espere un momento por favor...</p>
         <div class="progress-bar">
           <div class="progress-fill"></div>
         </div>

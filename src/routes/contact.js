@@ -6,6 +6,7 @@ const { body, validationResult } = require('express-validator');
 const rateLimit = require('express-rate-limit');
 
 // Límite de solicitudes al formulario de contacto
+// @ts-ignore
 const contactFormLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutos
     max: 5, // Máximo de 5 solicitudes por IP
@@ -70,6 +71,7 @@ router.post('/', contactFormLimiter, [
             console.log('Correo enviado: ' + info.response);
             
             // Respuesta exitosa
+            // @ts-ignore
             res.status(201).json({ message: 'Formulario enviado correctamente y correo enviado', id: results.insertId });
         });
     });

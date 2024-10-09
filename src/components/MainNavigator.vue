@@ -12,6 +12,10 @@
       <li><a href="#gallery" @click="scrollToSection($event, '#gallery')">Galería</a></li>
       <li><a href="#location" @click="scrollToSection($event, '#location')">Ubicación</a></li>
       <li><a href="#contact" @click="scrollToSection($event, '#contact')">Contacto</a></li>
+      <!-- Botón de Login -->
+      <li>
+        <button class="login-button" @click="goToLogin">Iniciar sesión</button>
+      </li>
     </ul>
   </nav>
 </template>
@@ -34,31 +38,27 @@ export default {
     handleScroll() {
       const currentScroll = window.scrollY;
       // @ts-ignore
-      const videoHeight = document.querySelector('.video-background').offsetHeight;
-      
-      // Ajusta los umbrales
-      const whiteBackgroundThreshold = this.isMenuOpen ? 1000 : 800; 
+      const videoHeight = document.querySelector('.video-background')?.offsetHeight || 0;
+
+      const whiteBackgroundThreshold = this.isMenuOpen ? 1000 : 800;
       const blackBackgroundThreshold = videoHeight;
 
       this.isScrolled = currentScroll > 50;
 
-      // Cambios de fondo
       this.isBlackBackground = currentScroll > blackBackgroundThreshold && currentScroll <= whiteBackgroundThreshold;
       this.isPinkBackground = currentScroll > whiteBackgroundThreshold;
 
-      // Cierra el menú si se hace scroll
       if (this.isMenuOpen) {
-        this.isMenuOpen = false; // Cierra el menú al hacer scroll
+        this.isMenuOpen = false;
       }
 
-      // Mantiene el estado de la barra
       if (this.isPinkBackground) {
-        this.isScrolled = true; 
+        this.isScrolled = true;
       }
     },
     scrollToSection(event, target) {
       event.preventDefault();
-      
+
       const element = document.querySelector(target);
       if (element) {
         const offsetTop = element.offsetTop - 60;
@@ -72,6 +72,9 @@ export default {
           this.isMenuOpen = false;
         }
       }
+    },
+    goToLogin() {
+      this.$router.push('/login'); // Cambia a la ruta de inicio de sesión
     }
   },
   mounted() {
@@ -93,18 +96,18 @@ html {
   justify-content: space-between;
   align-items: center;
   padding: 15px 30px;
-  background-color: transparent; /* Comienza transparente */
+  background-color: transparent;
   color: white;
   position: fixed;
   width: 100%;
   top: 0;
   z-index: 1000;
   box-sizing: border-box;
-  transition: background-color 0.5s ease; /* Asegura que la transición sea suave */
+  transition: background-color 0.5s ease;
 }
 
 .navigator.pink-background {
-  background-color: #FF007F; /* Cambia a rosado */
+  background-color: #FF007F;
 }
 
 .logo img {
@@ -117,7 +120,7 @@ html {
   list-style: none;
   margin: 0;
   padding: 0;
-  transition: background-color 0.5s ease, color 0.5s ease; /* Asegura que la transición sea suave */
+  transition: background-color 0.5s ease, color 0.5s ease;
 }
 
 .nav-links li {
@@ -125,21 +128,51 @@ html {
 }
 
 .nav-links a {
-  color: white; /* Color blanco por defecto */
+  color: white;
   text-decoration: none;
   font-size: 1.1em;
   transition: color 0.3s ease;
 }
 
 .nav-links a:hover {
-  color: #FF007F; /* Hover rosado por defecto */
+  color: #FF007F;
 }
 
 .navigator.pink-background .nav-links a:hover {
-  color: black; /* Hover negro cuando el fondo es rosado */
+  color: black;
 }
 
-/* Estilos para el icono del menú */
+/* Botón de Login */
+.login-button {
+  background-color: transparent;
+  color: white;
+  border: 2px solid white; /* Borde blanco por defecto */
+  padding: 6px 12px; /* Tamaño más pequeño */
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 1em; /* Fuente más pequeña */
+  font-family: 'Bebas Neue', sans-serif; /* Cambiar la fuente */
+  transition: background-color 0.3s ease, color 0.3s ease;
+  position: relative;
+  top: -7px; /* Subir el botón */
+}
+
+.login-button:hover {
+  background-color: white;
+  color: #FF007F;
+}
+
+.navigator.pink-background .login-button {
+  background-color: transparent;
+  border: 2px solid white; /* Borde blanco cuando el fondo es #FF007F */
+  color: white; /* Texto blanco cuando el fondo es #FF007F */
+}
+
+.navigator.pink-background .login-button:hover {
+  background-color: black;
+  color: white;
+}
+
 .menu-toggle {
   display: none;
   cursor: pointer;
@@ -182,16 +215,21 @@ html {
   }
 
   .nav-links.nav-links--active li {
-    margin: 5px 0; /* Reduce el margen para que estén más juntos */
-    padding: 10px 0; /* Ajusta el padding verticalmente si es necesario */
+    margin: 5px 0;
+    padding: 10px 0;
   }
 
   .navigator.pink-background .nav-links {
-    background-color: #FF007F; /* Asegura que el fondo cambie junto con el navigator */
+    background-color: #FF007F;
   }
 
   .navigator.pink-background .nav-links a:hover {
-    color: black; /* Hover negro en dispositivos móviles cuando el fondo es rosado */
+    color: black;
+  }
+
+  /* Aplicar margin-left solo en dispositivos pequeños */
+  .login-button {
+    margin-left: -10px;
   }
 }
 
@@ -206,7 +244,3 @@ html {
   }
 }
 </style>
-
-
-
-
