@@ -167,6 +167,7 @@
 import ContactPetitions from './ContactPetitions.vue';
 import StaffAcademy from './StaffAcademy.vue';
 import SubscribedKids from './SubscribedKids.vue';
+import axios from 'axios';
 
 export default {
     name: 'DashboardComponent',
@@ -242,16 +243,36 @@ export default {
         },
 
         addNewStudent() {
-            // Validar campos
-            if (!this.newStudent.name || !this.newStudent.rut || !this.newStudent.address || !this.newStudent.weight || !this.newStudent.height || !this.newStudent.age || !this.newStudent.position || !this.newStudent.category) {
-                alert('Por favor, completa todos los campos.');
-                return;
-            }
+    // Validar campos
+                if (!this.newStudent.name || !this.newStudent.rut || !this.newStudent.address || !this.newStudent.weight || !this.newStudent.height || !this.newStudent.age || !this.newStudent.position || !this.newStudent.category) {
+                    alert('Por favor, completa todos los campos.');
+                    return;
+                }
 
-            alert('Alumno ingresado');
-            this.cards.push({ title: this.newStudent.name });
-            this.closeAddStudentModal();
-        },
+                // Intentar agregar el nuevo estudiante al backend
+                axios.post('http://localhost:3000/api/students', this.newStudent)
+                    .then(response => {
+                        alert('Alumno ingresado exitosamente');
+                        console.log(response.data); // Usar la respuesta
+                        this.cards.push({ title: this.newStudent.name });
+                        this.newStudent = {
+                            name: '',
+                            rut: '',
+                            address: '',
+                            weight: '',
+                            height: '',
+                            age: '',
+                            football_position: '',
+                            category_id: ''
+                        };
+                        this.closeAddStudentModal();
+            })
+            .catch(error => {
+                console.error('Error al agregar el estudiante:', error);
+                alert('Hubo un error al agregar el estudiante. Inténtalo más tarde.');
+            });
+                    }
+                    ,
 
         openAddUserModal() {
             this.isAddUserModalVisible = true;
