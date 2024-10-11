@@ -2,11 +2,7 @@
   <section class="about-us" id="about">
     <div class="cards-container">
       <!-- Tarjetas dinámicas -->
-      <div
-        v-for="(image, index) in images"
-        :key="index"
-        class="card"
-      >
+      <div v-for="(image, index) in images" :key="index" class="card">
         <img :src="image.src" alt="Imagen" class="card-img" :class="{ 'png-image': image.src.endsWith('.png') }" />
         <div class="card-content">
           <h2>{{ image.title }}</h2>
@@ -90,29 +86,40 @@ export default {
 <style scoped>
 .about-us {
   padding: 60px 30px;
-  background-color: #000; /* Fondo negro */
+  background-color: #000;
+  /* Fondo negro */
   text-align: center;
 }
 
 /* Contenedor para las tarjetas */
 .cards-container {
   display: grid;
-  grid-template-columns: repeat(1, 1fr); /* 1 columna por defecto */
-  gap: 30px; /* Espacio entre las tarjetas */
-  justify-items: stretch; /* Asegura que las tarjetas ocupen todo el ancho disponible */
-  width: 100%; /* Hace que el contenedor ocupe todo el ancho disponible */
+  grid-template-columns: repeat(1, 1fr);
+  /* 1 columna por defecto */
+  gap: 30px;
+  /* Espacio entre las tarjetas */
+  justify-items: stretch;
+  /* Asegura que las tarjetas ocupen todo el ancho disponible */
+  width: 100%;
+  /* Hace que el contenedor ocupe todo el ancho disponible */
 }
 
 /* Estilos para las tarjetas */
 .card {
-  max-width: 320px; /* Ancho máximo de la tarjeta */
-  height: 450px; /* Altura de la tarjeta */
+  max-width: 320px;
+  /* Ancho máximo de la tarjeta */
+  height: 450px;
+  /* Altura de la tarjeta */
   border-radius: 15px;
-  overflow: hidden; /* Oculta el contenido que se sale de la tarjeta */
-  background-color: #1c1c1c; /* Fondo oscuro de la tarjeta */
-  transition: transform 0.5s ease, opacity 0.5s ease; /* Transiciones suaves */
+  overflow: hidden;
+  /* Oculta el contenido que se sale de la tarjeta */
+  background-color: #1c1c1c;
+  /* Fondo oscuro de la tarjeta */
+  transition: transform 0.5s ease, opacity 0.5s ease;
+  /* Transiciones suaves */
   cursor: pointer;
-  margin: 0 auto; /* Centrar la tarjeta en todas las pantallas */
+  margin: 0 auto;
+  /* Centrar la tarjeta en todas las pantallas */
   position: relative;
 }
 
@@ -121,11 +128,13 @@ export default {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  transition: opacity 0.5s ease; /* Transiciones suaves para la opacidad */
+  transition: opacity 0.5s ease;
+  /* Transiciones suaves para la opacidad */
 }
 
 .png-image {
-  transform: scale(1.0); /* Escala inicial para imágenes PNG */
+  transform: scale(1.0);
+  /* Escala inicial para imágenes PNG */
   transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
@@ -139,7 +148,8 @@ export default {
 
 /* Contenido de la tarjeta */
 .card-content {
-  position: absolute; /* Posiciona el contenido en la tarjeta */
+  position: absolute;
+  /* Posiciona el contenido en la tarjeta */
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -152,19 +162,24 @@ export default {
   align-items: center;
   width: 100%;
   height: 100%;
-  opacity: 0; /* Inicialmente oculto */
+  opacity: 0;
+  /* Inicialmente oculto */
   transition: opacity 0.5s ease;
-  pointer-events: none; /* Desactiva la interacción con el contenido */
+  pointer-events: none;
+  /* Desactiva la interacción con el contenido */
 }
 
 .card:hover .card-content {
-  opacity: 1; /* Se muestra el contenido al hacer hover */
-  pointer-events: auto; /* Activa la interacción solo cuando se hace hover */
+  opacity: 1;
+  /* Se muestra el contenido al hacer hover */
+  pointer-events: auto;
+  /* Activa la interacción solo cuando se hace hover */
 }
 
 .card-content h2 {
   margin-bottom: 10px;
-  font-size: 1.5em; /* Tamaño del título */
+  font-size: 1.5em;
+  /* Tamaño del título */
   color: #ff007f;
 }
 
@@ -185,25 +200,29 @@ export default {
 /* Ajustes responsive para las tarjetas */
 @media (max-width: 480px) {
   .cards-container {
-    grid-template-columns: repeat(1, 1fr); /* 1 columna en móviles */
+    grid-template-columns: repeat(1, 1fr);
+    /* 1 columna en móviles */
   }
 }
 
 @media (min-width: 481px) and (max-width: 768px) {
   .cards-container {
-    grid-template-columns: repeat(2, 1fr); /* 2 columnas en tablets */
+    grid-template-columns: repeat(2, 1fr);
+    /* 2 columnas en tablets */
   }
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
   .cards-container {
-    grid-template-columns: repeat(3, 1fr); /* 3 columnas en pantallas más grandes */
+    grid-template-columns: repeat(3, 1fr);
+    /* 3 columnas en pantallas más grandes */
   }
 }
 
 @media (min-width: 1025px) {
   .cards-container {
-    grid-template-columns: repeat(6, 1fr); /* 6 columnas en pantallas grandes */
+    grid-template-columns: repeat(6, 1fr);
+    /* 6 columnas en pantallas grandes */
   }
 }
 </style>

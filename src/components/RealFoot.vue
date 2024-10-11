@@ -97,8 +97,10 @@ export default {
 
 /* Estilos para el texto de derechos reservados */
 .rights-text {
-  margin-top: 10px; /* Espaciado superior */
-  font-size: 1em; /* Tamaño de fuente */
+  margin-top: 10px;
+  /* Espaciado superior */
+  font-size: 1em;
+  /* Tamaño de fuente */
   opacity: 0;
   transform: translateY(20px);
   transition: opacity 0.6s ease-out, transform 0.6s ease-out;

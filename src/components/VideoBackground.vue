@@ -1,16 +1,8 @@
 <template>
   <section class="video-background" id="home">
     <div v-for="(video, index) in videoUrls" :key="index">
-      <video
-        v-show="currentIndex === index"
-        autoplay
-        muted
-        loop
-        class="background-video"
-        @loadeddata="onVideoLoaded"
-        @ended="onVideoEnded"
-        @contextmenu.prevent
-      >
+      <video v-show="currentIndex === index" autoplay muted loop class="background-video" @loadeddata="onVideoLoaded"
+        @ended="onVideoEnded" @contextmenu.prevent>
         <source :src="video.mp4" type="video/mp4" />
         <source :src="video.webm" type="video/webm" />
         Your browser does not support the video tag.
@@ -101,7 +93,8 @@ export default {
   top: 0;
   left: 0;
   transition: opacity 1s ease;
-  filter: grayscale(0.6) brightness(0.8); /* Aplica un filtro de escala de grises y ajuste de brillo */
+  filter: grayscale(0.6) brightness(0.8);
+  /* Aplica un filtro de escala de grises y ajuste de brillo */
 }
 
 .overlay {

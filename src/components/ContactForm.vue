@@ -49,7 +49,7 @@
     <!-- Componente de loading mientras se envía el formulario -->
     <div v-if="isLoading" class="loading-container">
       <div class="loading-logo">
-        <img src="/real-academy-fc/logo-en-blanco.png" alt="Logo de la Academia" class="loading-blink"/>
+        <img src="/assets/logos/logo-sin-fondo.png" alt="Logo de la Academia" class="loading-blink"/>
       </div>
       <p>Estamos cargando tu solicitud...</p>
       <div class="loading-bar">
@@ -59,7 +59,7 @@
 
     <!-- Mostrar mensaje de éxito si el formulario se envió correctamente -->
     <div v-if="formSuccess" class="success-message visible"> <!-- Agrega la clase visible -->
-      <img src="/real-academy-fc/logo-en-blanco.png" alt="Logo de la Academia" />
+      <img src="/assets/logos/logo-sin-fondo.png" alt="Logo de la Academia" />
       <h2>¡Formulario Enviado!</h2>
       <p>Gracias por contactarnos. Nos pondremos en contacto contigo pronto.</p>
       <p>A continuación, serás redirigido a la página de inicio.</p>
@@ -262,7 +262,7 @@ button:hover {
 }
 
 .loading-logo img {
-  width: 100px;
+  width: 200px;
   margin-bottom: 20px;
 }
 

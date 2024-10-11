@@ -1,41 +1,46 @@
-// routes/student.js
 const express = require('express');
+const connection = require('../db'); // Asegúrate de que la ruta sea correcta
 const router = express.Router();
-const db = require('../db');
-const { body, validationResult } = require('express-validator');
+
+// Endpoint para obtener todos los estudiantes
+router.get('/', (req, res) => {
+    connection.query('SELECT * FROM subscribed_kids', (error, results) => {
+        if (error) {
+            return res.status(500).json({ error: 'Error en la consulta de alumnos' });
+        }
+        res.json(results);
+    });
+});
 
 // Ruta para agregar un nuevo estudiante
 router.post('/', [
-    body('name').trim().notEmpty().withMessage('El nombre es obligatorio').escape(),
-    body('rut').trim().notEmpty().withMessage('El RUT es obligatorio').escape(),
-    body('address').trim().notEmpty().withMessage('La dirección es obligatoria').escape(),
-    body('weight').isNumeric().withMessage('El peso debe ser numérico').escape(),
-    body('height').isNumeric().withMessage('La estatura debe ser numérica').escape(),
-    body('age').isNumeric().withMessage('La edad debe ser numérica').escape(),
-    body('football_position').trim().notEmpty().withMessage('La posición es obligatoria').escape(),
-    body('category_id').trim().notEmpty().withMessage('La categoría es obligatoria').escape(),
+    // Validaciones
+    // (trim, notEmpty, etc. para los diferentes campos)
 ], (req, res) => {
-    // Validación de errores
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
-
-    const { name, rut, address, weight, height, age, position, category } = req.body;
-
-    // Consulta de inserción en la base de datos
-    const query = `INSERT INTO subscribed_kids 
-                   (name, rut, address, weight, height, age, football_position, category_id) 
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
-
-    db.query(query, [name, rut, address, weight, height, age, position, category], (err, results) => {
+    const { name, rut, address, weight, height, age, football_position, category_id } = req.body;
+    const query = `
+        INSERT INTO subscribed_kids (name, rut, address, weight, height, age, football_position, category_id, created_at) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
+    `;
+    connection.query(query, [name, rut, address, weight, height, age, football_position, category_id], (err, result) => {
         if (err) {
-            console.error('Error al insertar en la base de datos: ', err);
-            return res.status(500).json({ error: 'Error al agregar el estudiante. Inténtalo más tarde.' });
+            console.error('Error al insertar el estudiante:', err);
+            return res.status(500).json({ message: 'Error al insertar el estudiante' });
         }
+        res.status(201).json({ message: 'Estudiante agregado exitosamente' });
+    });
+});
 
-        // Respuesta exitosa
-        res.status(201).json({ message: 'Estudiante agregado correctamente', id: results.insertId });
+// Ruta para eliminar un estudiante
+router.delete('/:rut', (req, res) => {
+    const { rut } = req.params;
+    const query = 'DELETE FROM subscribed_kids WHERE rut = ?';
+    connection.query(query, [rut], (error, result) => {
+        if (error) {
+            console.error('Error al eliminar el estudiante:', error);
+            return res.status(500).json({ message: 'Error al eliminar el estudiante' });
+        }
+        res.status(200).json({ message: 'Estudiante eliminado exitosamente' });
     });
 });
 

@@ -1,5 +1,6 @@
 <template>
-  <nav class="navigator" :class="{ 'scrolled': isScrolled, 'black-background': isBlackBackground, 'pink-background': isPinkBackground }">
+  <nav class="navigator"
+    :class="{ 'scrolled': isScrolled, 'black-background': isBlackBackground, 'pink-background': isPinkBackground }">
     <div class="logo">
       <img src="/assets/logos/logo-en-blanco.png" class="logo" alt="Logo" />
     </div>
@@ -146,15 +147,20 @@ html {
 .login-button {
   background-color: transparent;
   color: white;
-  border: 2px solid white; /* Borde blanco por defecto */
-  padding: 6px 12px; /* Tamaño más pequeño */
+  border: 2px solid white;
+  /* Borde blanco por defecto */
+  padding: 6px 12px;
+  /* Tamaño más pequeño */
   border-radius: 20px;
   cursor: pointer;
-  font-size: 1em; /* Fuente más pequeña */
-  font-family: 'Bebas Neue', sans-serif; /* Cambiar la fuente */
+  font-size: 1em;
+  /* Fuente más pequeña */
+  font-family: 'Bebas Neue', sans-serif;
+  /* Cambiar la fuente */
   transition: background-color 0.3s ease, color 0.3s ease;
   position: relative;
-  top: -7px; /* Subir el botón */
+  top: -7px;
+  /* Subir el botón */
 }
 
 .login-button:hover {
@@ -164,8 +170,10 @@ html {
 
 .navigator.pink-background .login-button {
   background-color: transparent;
-  border: 2px solid white; /* Borde blanco cuando el fondo es #FF007F */
-  color: white; /* Texto blanco cuando el fondo es #FF007F */
+  border: 2px solid white;
+  /* Borde blanco cuando el fondo es #FF007F */
+  color: white;
+  /* Texto blanco cuando el fondo es #FF007F */
 }
 
 .navigator.pink-background .login-button:hover {
