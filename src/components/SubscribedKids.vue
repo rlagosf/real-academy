@@ -1,134 +1,157 @@
 <template>
-    <div class="subscribed-kids-container">
+    <div>
+      <!-- Mostrar LoadingReal mientras loading sea true -->
+      <LoadingReal v-if="loading" />
+  
+      <!-- Mostrar el contenido completo solo si loading es false -->
+      <div v-if="!loading" class="subscribed-kids-container">
         <img src="/assets/logos/logo-en-negativo.png" alt="Logo" class="login-logo" />
-        <h1>Alumnos Inscritos</h1>
+        <h1 class="title-center">Alumnos Inscritos</h1>
+  
         <table>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>RUT</th>
-                    <th>Address</th>
-                    <th>Weight</th>
-                    <th>Height</th>
-                    <th>Age</th>
-                    <th>Football Position</th>
-                    <th>Category ID</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="kid in kids" :key="kid.rut">
-                    <td>{{ kid.name }}</td>
-                    <td>{{ kid.rut }}</td>
-                    <td>{{ kid.address }}</td>
-                    <td>{{ kid.weight }}</td>
-                    <td>{{ kid.height }}</td>
-                    <td>{{ kid.age }}</td>
-                    <td>{{ kid.football_position }}</td>
-                    <td>{{ kid.category_id }}</td>
-                    <td>
-                        <button @click="editKid(kid)">
-                            <i class="fas fa-pencil-alt"></i> <!-- Ícono de lápiz -->
-                        </button>
-                        <button @click="deleteKid(kid.rut)">
-                            <i class="fas fa-trash"></i> <!-- Ícono de basurero -->
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>RUT</th>
+              <th>Dirección</th>
+              <th>Peso</th>
+              <th>Estatura</th>
+              <th>Edad</th>
+              <th>Posición de fútbol</th>
+              <th>Categoría</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="kid in kids" :key="kid.rut">
+              <td>{{ kid.name }}</td>
+              <td>{{ kid.rut }}</td>
+              <td>{{ kid.address }}</td>
+              <td>{{ kid.weight }}</td>
+              <td>{{ kid.height }}</td>
+              <td>{{ kid.age }}</td>
+              <td>{{ kid.football_position }}</td>
+              <td>{{ kid.category_id }}</td>
+              <td>
+                <button @click="editKid(kid)">
+                  <i class="fas fa-pencil-alt"></i>
+                </button>
+                <button @click="deleteKid(kid.rut)">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
         </table>
+      </div>
     </div>
-</template>
-
-<script>
-import axios from 'axios';
-
-export default {
+  </template>
+  
+  <script>
+  import axios from 'axios';
+  import LoadingReal from './LoadingReal.vue'; // Importar el componente LoadingReal
+  
+  export default {
     name: 'SubscribedKids',
+    components: {
+      LoadingReal // Registrar el componente LoadingReal
+    },
     data() {
-        return {
-            kids: []
-        };
+      return {
+        kids: [],
+        loading: true // Definir loading como true inicialmente
+      };
     },
     mounted() {
-        this.fetchSubscribedKids();
+      this.fetchSubscribedKids();
     },
     methods: {
-        async fetchSubscribedKids() {
-            try {
-                const response = await axios.get('http://localhost:3000/api/student');
-                this.kids = response.data;
-            } catch (error) {
-                console.error('Error al obtener los alumnos inscritos:', error);
-            }
-        },
-        deleteKid(rut) {
-            const confirmDelete = confirm(`¿Estás seguro de que quieres eliminar a ${rut}?`);
-            if (confirmDelete) {
-                axios.delete(`http://localhost:3000/api/student/${rut}`)
-                    .then(() => {
-                        this.kids = this.kids.filter(k => k.rut !== rut);
-                    })
-                    .catch(error => {
-                        console.error('Error al eliminar el alumno:', error);
-                    });
-            }
-        },
-        editKid(kid) {
-            alert(`Editando a: ${kid.name}`);
-        },
+      async fetchSubscribedKids() {
+        try {
+          const response = await axios.get('http://localhost:3000/api/student');
+          this.kids = response.data;
+        } catch (error) {
+          console.error('Error al obtener los alumnos inscritos:', error);
+        } finally {
+          this.loading = false; // Desactivar el loading después de cargar los datos
+        }
+      },
+      deleteKid(rut) {
+        const confirmDelete = confirm(`¿Estás seguro de que quieres eliminar a ${rut}?`);
+        if (confirmDelete) {
+          axios.delete(`http://localhost:3000/api/student/${rut}`)
+            .then(() => {
+              this.kids = this.kids.filter(k => k.rut !== rut);
+            })
+            .catch(error => {
+              console.error('Error al eliminar el alumno:', error);
+            });
+        }
+      },
+      editKid(kid) {
+        alert(`Editando a: ${kid.name}`);
+      },
     }
-};
-</script>
-
-<style scoped>
-.subscribed-kids-container {
+  };
+  </script>
+  
+  <style scoped>
+  .subscribed-kids-container {
     background-color: white;
     padding: 20px;
     font-family: 'Bebas Neue', sans-serif;
-}
-
-.login-logo {
+    text-align: center;
+  }
+  
+  .login-logo {
     width: 150px;
     margin-bottom: 20px;
-}
-
-h1 {
-    color: #2c3e50;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .title-center {
+    text-align: center;
+    color: black;
     margin-bottom: 20px;
-}
-
-table {
+    font-size: 2em;
+  }
+  
+  table {
     width: 100%;
     border-collapse: collapse;
-    border: 3px solid #ff007f; /* Borde grueso color #ff007f */
-    border-radius: 30px; /* Esquinas redondeadas */
-}
-
-th,
-td {
-    border: 2px solid #ff007f; /* Línea divisoria gruesa */
+    border: 3px solid #ff007f;
+    border-radius: 30px;
+    overflow: hidden;
+    margin-top: 20px;
+  }
+  
+  th, td {
+    border: 2px solid #ff007f;
     padding: 10px;
     text-align: left;
-}
-
-th {
+  }
+  
+  th {
     background-color: black;
     color: white;
-}
-
-button {
+    text-align: center;
+  }
+  
+  button {
     background: none;
     border: none;
     cursor: pointer;
     color: #2c3e50;
-}
-
-button i {
+  }
+  
+  button i {
     font-size: 20px;
-}
-
-button:hover {
+  }
+  
+  button:hover {
     opacity: 0.7;
-}
-</style>
+  }
+  </style>
+  

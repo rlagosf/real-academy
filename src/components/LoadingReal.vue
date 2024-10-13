@@ -1,7 +1,7 @@
 <template>
     <div class="loading-container">
       <div class="loading-content">
-        <img src="/real-academy-fc/logo-en-blanco.png" alt="Logo de la Academia" />
+        <img src="/assets/logos/logo-en-negativo.png" alt="Logo de la Academia" class="logo"/>
         <p>Espere un momento por favor...</p>
         <div class="progress-bar">
           <div class="progress-fill"></div>
@@ -28,7 +28,8 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: black;
+    background-color: white;
+    color: black;
   }
   
   .loading-content {
@@ -46,14 +47,15 @@
   }
   
   p {
-    color: white;
+    color: black;
     margin-bottom: 20px;
   }
   
   .progress-bar {
     width: 300px;
     height: 20px;
-    border: 2px solid white;
+    border: 2px solid black;
+    border-radius: 15px 15px 15px 15px;
     background-color: black;
     position: relative;
   }
@@ -62,6 +64,7 @@
     height: 100%;
     background-color: white;
     width: 0;
+    border-radius: 15px 15px 15px 15px;
     animation: fillProgress 3s forwards;
   }
   
