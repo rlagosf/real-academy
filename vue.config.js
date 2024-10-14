@@ -17,7 +17,14 @@ module.exports = defineConfig({
         __VUE_PROD_DEVTOOLS__: false,
         __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false
       })
-    ]
+    ],
+    resolve: {
+      fallback: {
+        "crypto": require.resolve("crypto-browserify"),
+        "stream": require.resolve("stream-browserify"),
+        "vm": require.resolve("vm-browserify")  // Polyfill para 'vm'
+      }
+    }
   },
 
   chainWebpack: config => {

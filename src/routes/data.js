@@ -43,4 +43,14 @@ router.get('/contact', (req, res) => {
     });
 });
 
+router.get('/sources', (req, res) => {
+    connection.query('SELECT * FROM how_meet_academy', (error, results) => {
+        console.log(results)
+        if (error) {
+            return res.status(500).json({ error: 'Error en la consulta de contactos' });
+        }
+        res.json(results);
+    });
+});
+
 module.exports = router;

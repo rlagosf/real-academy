@@ -37,11 +37,12 @@
         ref="formInputs"
       />
       <select v-model="form.source" required ref="formInputs">
-        <option disabled value="">¿Cómo conociste la academia?</option>
-        <option value="social">Redes Sociales</option>
-        <option value="recommendation">Recomendación</option>
-        <option value="other">Otros</option>
-      </select>
+      <option disabled value="">¿Cómo conociste la academia?</option>
+      <!-- Aquí llenaremos dinámicamente las opciones -->
+      <option v-for="source in sources" :key="source.id" :value="source.id">
+        {{ source.name }}
+      </option>
+    </select>
       <!-- Añadido ref para el botón -->
       <button type="submit" ref="formButton" class="form-button">Enviar</button>
     </form>
@@ -84,6 +85,7 @@ export default {
       },
       isLoading: false,  // Estado de loading
       formSuccess: false, // Estado para saber si el formulario fue enviado con éxito
+      sources: [] 
     };
   },
   methods: {
@@ -123,6 +125,16 @@ export default {
     this.isLoading = false;
   }
 },
+getSources() {
+      axios.get('http://localhost:3000/api/data/sources')  // Ajusta la URL según tu configuración
+        .then((response) => {
+          this.sources = response.data;  // Guardamos los datos en el array sources
+          console.log(response.data)
+        })
+        .catch((error) => {
+          console.error("Hubo un error al obtener las fuentes:", error);
+        });
+    },
 showSuccessMessage() {
   setTimeout(() => {
     // @ts-ignore
@@ -153,9 +165,12 @@ showSuccessMessage() {
     }
   },
   mounted() {
+    this.getSources();
   // Obtener todos los elementos de entrada y el botón en la sección de contacto
+
   // @ts-ignore
   const contactElements = this.$refs.contactSection.querySelectorAll('input, select, button, .success-message');
+
 
   // Configuración del IntersectionObserver para activar las animaciones
   const observer = new IntersectionObserver((entries) => {

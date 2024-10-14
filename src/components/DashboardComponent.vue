@@ -57,7 +57,8 @@
 
                 <div class="input-group">
                     <label for="student-rut">RUT:</label>
-                    <input id="student-rut" v-model="newStudent.rut" placeholder="RUT" />
+                    <input id="student-rut" v-model="newStudent.rut" placeholder="RUT" type="text" maxlength="9"
+                        @input="validateRutInput('student')" />
                 </div>
 
                 <div class="input-group">
@@ -67,17 +68,20 @@
 
                 <div class="input-group">
                     <label for="student-weight">Peso (kg):</label>
-                    <input id="student-weight" v-model="newStudent.weight" placeholder="Peso (kg)" type="number" />
+                    <input id="student-weight" v-model="newStudent.weight" placeholder="Peso (kg)" type="number"
+                        maxlength="3" @input="validateWeightAndHeight('weight')" class="no-spin" />
                 </div>
 
                 <div class="input-group">
                     <label for="student-height">Estatura (cm):</label>
-                    <input id="student-height" v-model="newStudent.height" placeholder="Estatura (cm)" type="number" />
+                    <input id="student-height" v-model="newStudent.height" placeholder="Estatura (cm)" type="number"
+                        maxlength="3" @input="validateWeightAndHeight('height')" class="no-spin" />
                 </div>
 
                 <div class="input-group">
                     <label for="student-age">Edad:</label>
-                    <input id="student-age" v-model="newStudent.age" placeholder="Edad" type="number" />
+                    <input id="student-age" v-model="newStudent.age" placeholder="Edad" type="number" maxlength="2"
+                        @input="validateAge()" class="no-spin" />
                 </div>
 
                 <div class="input-group">
@@ -107,37 +111,52 @@
 
             <!-- Modal para agregar usuario -->
 
-            <div v-if="isAddUserModalVisible" class="modal modal-visible modal-active modal-extra">
-                <button class="close-modal" @click="closeAddUserModal">✖</button>
-                <h3>Agregar Usuario</h3>
+            <div>
+                <!-- Modal para agregar usuario -->
+                <div v-if="isAddUserModalVisible" class="modal modal-visible modal-active modal-extra">
+                    <button class="close-modal" @click="closeAddUserModal">✖</button>
+                    <h3>Agregar Usuario</h3>
 
-                <div class="input-group">
-                    <label for="user-name">Nombre:</label>
-                    <input id="user-name" v-model="newUser.name" placeholder="Nombre" />
+                    <div class="input-group">
+                        <label for="user-name">Nombre:</label>
+                        <input id="user-name" v-model="newUser.name" placeholder="Nombre" maxlength="50" />
+                    </div>
+
+                    <div class="input-group">
+                        <label for="user-username">Nombre de usuario:</label>
+                        <input id="user-username" v-model="newUser.username" placeholder="Nombre de usuario"
+                            maxlength="12" />
+                    </div>
+
+                    <div class="input-group">
+                        <label for="user-email">Correo electrónico:</label>
+                        <input id="user-email" v-model="newUser.email" placeholder="Correo electrónico" type="email"
+                            required />
+                    </div>
+
+                    <div class="input-group">
+                        <label for="user-role">Rol de usuario:</label>
+                        <select id="user-role" v-model="newUser.rol_id" class="full-width">
+                            <option disabled value="">Selecciona un rol</option>
+                            <option v-for="role in roles" :key="role.id" :value="role.id">
+                                {{ role.name }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <button @click="addNewUser" class="add-button">Agregar</button>
                 </div>
 
-                <div class="input-group">
-                    <label for="user-username">Nombre de usuario:</label>
-                    <input id="user-username" v-model="newUser.username" placeholder="Nombre de usuario" />
-                </div>
-
-                <div class="input-group">
-                    <label for="user-password">Contraseña:</label>
-                    <input id="user-password" v-model="newUser.password" placeholder="Contraseña" type="password" />
-                </div>
-
-                <div class="input-group">
-                    <label for="user-role">Rol de usuario:</label>
-                    <select id="user-role" v-model="newUser.rol_id" class="full-width">
-                        <option disabled value="">Selecciona un rol</option>
-                        <option v-for="role in roles" :key="role.id" :value="role.id">
-                            {{ role.name }}
-                        </option>
-                    </select>
-                </div>
-
-                <button @click="addNewUser" class="add-button">Agregar</button>
+                <!-- Ventana emergente de confirmación (SuccessModal) -->
+                <div v-if="isSuccessVisible" class="success-modal">
+    <div class="modal-content">
+        <img src="/assets/logos/logo-con-blanco-sin-fondo.png" alt="Logo" class="success-logo" />
+        <h3 class="success-message">{{ successMessage }}</h3>
+        <button class="btn-accept" @click="redirectToDashboard">Aceptar</button>
+    </div>
+</div>
             </div>
+
 
 
 
@@ -145,35 +164,42 @@
             <div v-if="isAddStaffModalVisible" class="modal modal-visible modal-active modal-extra">
                 <button class="close-modal" @click="closeAddStaffModal">✖</button>
                 <h3>Agregar Personal para Staff</h3>
+
                 <div class="input-group">
                     <label for="staff-name">Nombre:</label>
                     <input id="staff-name" v-model="newStaff.name" placeholder="Nombre" />
                 </div>
+
                 <div class="input-group">
                     <label for="staff-rut">RUT:</label>
-                    <input id="staff-rut" v-model="newStaff.rut" placeholder="RUT" />
+                    <input id="staff-rut" v-model="newStaff.rut" placeholder="RUT" type="text" maxlength="9"
+                        @input="validateRutInput('staff')" />
                 </div>
+
                 <div class="input-group">
                     <label for="staff-address">Dirección:</label>
                     <input id="staff-address" v-model="newStaff.address" placeholder="Dirección" />
                 </div>
+
                 <div class="input-group">
                     <label for="staff-phone">Teléfono:</label>
-                    <input id="staff-phone" v-model="newStaff.phone" placeholder="Teléfono" />
+                    <input id="staff-phone" v-model="newStaff.phone" placeholder="Teléfono" type="tel" required
+                        pattern="[0-9]*" maxlength="9" @input="validatePhone" ref="formInputs" />
                 </div>
+
+
                 <div class="input-group">
                     <label for="staff-email">Email:</label>
                     <input id="staff-email" v-model="newStaff.email" placeholder="Email" />
                 </div>
+
                 <div class="input-group">
                     <label for="staff-occupation">Ocupación:</label>
                     <input id="staff-occupation" v-model="newStaff.occupation" placeholder="Ocupación" />
                 </div>
+
                 <button @click="addNewStaff" class="add-button">Agregar</button>
             </div>
-
-
-
         </div>
     </div>
 </template>
@@ -183,6 +209,9 @@ import ContactPetitions from './ContactPetitions.vue';
 import StaffAcademy from './StaffAcademy.vue';
 import SubscribedKids from './SubscribedKids.vue';
 import axios from 'axios';
+import bcrypt from 'bcryptjs';
+import { validateRut } from '@fdograph/rut-utilities';
+
 
 export default {
     name: 'DashboardComponent',
@@ -192,6 +221,8 @@ export default {
             isAddStudentModalVisible: false,
             isAddUserModalVisible: false,
             isAddStaffModalVisible: false,
+            isSuccessVisible: false,      // Control de visibilidad del SuccessModal
+            successMessage: '',           // Mensaje de éxito dinámico
             newStudent: {
                 name: '',
                 rut: '',
@@ -302,6 +333,120 @@ export default {
                 console.error('Error al obtener los roles:', error);
             }
         },
+        validateRutInput(type) {
+            // Según el tipo, actualizamos el campo de RUT correspondiente
+            const rut = type === 'staff' ? this.newStaff.rut : this.newStudent.rut;
+
+            // Eliminar caracteres no numéricos ni la letra K, solo aceptar dígitos y la letra K
+            const cleanedRut = rut.replace(/[^0-9kK]/g, '').toUpperCase();
+
+            // Actualizamos el campo con el RUT limpio
+            if (type === 'staff') {
+                this.newStaff.rut = cleanedRut;
+            } else {
+                this.newStudent.rut = cleanedRut;
+            }
+
+            // Verifica si el RUT es válido y tiene una longitud correcta (9 caracteres, incluyendo el dígito verificador)
+            if (cleanedRut.length === 9) {
+                const isValid = validateRut(cleanedRut); // Usamos la librería para validar el RUT
+                if (!isValid) {
+                    console.error('RUT inválido');
+                    // Aquí podrías mostrar un mensaje al usuario si el RUT no es válido
+                    alert('El RUT ingresado no es válido.');
+                }
+            }
+        }
+        ,
+        validateWeightAndHeight(field) {
+            // Asegurarse de que el valor sea una cadena antes de aplicar .replace
+            let value = String(this.newStudent[field]);
+
+            // Limita la longitud del número a 3 dígitos (peso y altura)
+            if (value.length > 3) {
+                value = value.slice(0, 3);
+            }
+
+            // Asegúrate de que solo contenga números (sin caracteres no numéricos)
+            value = value.replace(/[^0-9]/g, '');
+
+            // Asigna el valor corregido al campo
+            this.newStudent[field] = value;
+        },
+        validateAge(field) {
+            // Asegúrate de que el valor sea una cadena antes de aplicar .replace
+            let value = String(this.newStudent[field]);
+
+            // Limita la longitud del número a 2 dígitos (edad)
+            if (value.length > 2) {
+                value = value.slice(0, 2);
+            }
+
+            // Asegúrate de que solo contenga números (sin caracteres no numéricos)
+            value = value.replace(/[^0-9]/g, '');
+
+            // Asigna el valor corregido al campo
+            this.newStudent[field] = value;
+        },
+        validatePhone() {
+            // Asegúrate de que solo se ingresen números y que no exceda 9 dígitos
+            this.newStaff.phone = this.newStaff.phone.replace(/[^0-9]/g, '').slice(0, 9);
+        },
+        generatePassword() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let password = '';
+            for (let i = 0; i < 8; i++) {
+                password += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return password;
+        },
+        redirectToDashboard() {
+            this.$router.push({ name: 'Dashboard' }); // Asumiendo que tu ruta para el dashboard se llama 'dashboard'
+            this.isSuccessVisible = false; // Ocultamos el modal después de hacer clic
+        },
+        addNewStaff() {
+            // Verifica si todos los campos son válidos
+            if (!this.newStaff.name || !this.newStaff.rut || !this.newStaff.address ||
+                !this.newStaff.phone || !this.newStaff.email || !this.newStaff.occupation) {
+                alert('Todos los campos son obligatorios.');
+                return;
+            }
+
+            // Verificar si el RUT es válido
+            if (!this.newStaff.rut || !validateRut(this.newStaff.rut)) {
+                alert('El RUT ingresado no es válido.');
+                return;
+            }
+
+            // Crear el objeto que se enviará al backend
+            const staffData = {
+                name: this.newStaff.name,
+                rut: this.newStaff.rut,
+                address: this.newStaff.address,
+                phone: this.newStaff.phone,
+                email: this.newStaff.email,
+                occupation: this.newStaff.occupation
+            };
+
+            // Aquí harías la llamada a la API para agregar el personal
+            axios.post('http://localhost:3000/api/staff', staffData)
+                .then(response => {
+                    // Asumiendo que la respuesta es exitosa
+                    console.log('Personal agregado correctamente:', response.data);
+                    console.log(staffData);
+                    this.closeAddStaffModal(); // Cierra el modal al agregar el personal
+                })
+                .catch(error => {
+                    // Si ocurre un error con la solicitud
+                    console.error('Error al agregar personal:', error);
+
+                    // Puedes agregar un mensaje de error para mostrar al usuario
+                    alert('Hubo un problema al agregar el personal. Intenta de nuevo.');
+                });
+        }
+
+
+        ,
         addNewStudent() {
             // Verifica si todos los campos son válidos
             if (!this.newStudent.name || !this.newStudent.rut || !this.newStudent.address ||
@@ -309,6 +454,12 @@ export default {
                 !this.newStudent.age || !this.newStudent.football_position ||
                 !this.newStudent.category_id) {
                 alert('Todos los campos son obligatorios.');
+                return;
+            }
+
+            // Verificar si el RUT es válido
+            if (!this.newStudent.rut || !validateRut(this.newStudent.rut)) {
+                alert('El RUT ingresado no es válido.');
                 return;
             }
 
@@ -327,12 +478,17 @@ export default {
             // Aquí harías la llamada a la API para agregar el estudiante
             axios.post('http://localhost:3000/api/student', studentData)
                 .then(response => {
-                    console.log(response.data);
+                    // Asumiendo que la respuesta es exitosa
+                    console.log('Estudiante agregado correctamente:', response.data);
                     console.log(studentData);
                     this.closeAddStudentModal(); // Cierra el modal al agregar el estudiante
                 })
                 .catch(error => {
+                    // Si ocurre un error con la solicitud
                     console.error('Error al agregar estudiante:', error);
+
+                    // Puedes agregar un mensaje de error para mostrar al usuario
+                    alert('Hubo un problema al agregar el estudiante. Intenta de nuevo.');
                 });
         },
         openAddUserModal() {
@@ -342,6 +498,8 @@ export default {
         },
         closeAddUserModal() {
             this.isAddUserModalVisible = false;
+            this.isSuccessVisible = false;
+
         },
         resetUserForm() {
             this.newUser = {
@@ -353,16 +511,23 @@ export default {
         },
         addNewUser() {
             // Validar si los campos están completos
-            if (!this.newUser.name || !this.newUser.username || !this.newUser.password || !this.newUser.rol_id) {
+            if (!this.newUser.name || !this.newUser.username || !this.newUser.email || !this.newUser.rol_id) {
                 alert('Todos los campos son obligatorios.');
                 return;
             }
+
+            // Generar la contraseña automáticamente
+            const generatedPassword = this.generatePassword();
+
+            // Encriptar la contraseña generada
+            const hashedPassword = bcrypt.hashSync(generatedPassword, 10);
 
             // Crear el objeto para enviar
             const userData = {
                 name: this.newUser.name,
                 username: this.newUser.username,
-                password: this.newUser.password,
+                email: this.newUser.email,
+                password: hashedPassword,  // Contraseña encriptada
                 rol_id: this.newUser.rol_id
             };
 
@@ -370,11 +535,26 @@ export default {
             axios.post('http://localhost:3000/api/user', userData)
                 .then(response => {
                     console.log('Usuario agregado:', response.data);
-                    this.closeAddUserModal();
+
+                    // Asignar el mensaje de éxito con el correo
+                    this.successMessage = `CORREO ENVIADO SATISFACTORIAMENTE A ${this.newUser.email} FAVOR REVISE SU BANDEJA DE ENTRADA`;
+
+                    // Mostrar el modal de éxito
+                    this.isSuccessVisible = true;
+
+                    // Cerrar el modal de agregar usuario y resetear los datos
+                    this.isAddUserModalVisible = false;
                 })
                 .catch(error => {
                     console.error('Error al agregar usuario:', error);
+                    alert('Hubo un error al agregar el usuario. Inténtalo de nuevo.');
                 });
+        }
+        ,
+        showSuccessMessage(email) {
+            // Lógica para mostrar la ventana de éxito con el mensaje personalizado
+            this.isSuccessVisible = true;
+            this.successMessage = `USUARIO CREADO SATISFACTORIAMENTE, LA CONTRASEÑA HA SIDO ENVIADA AL CORREO ${email}. FAVOR REVISAR SU BANDEJA DE ENTRADA.`;
         },
         openAddStaffModal() {
             this.isAddStaffModalVisible = true;
@@ -395,26 +575,7 @@ export default {
             };
             this.errors = {};
         },
-        addNewStaff() {
-            // Validar los campos
-            if (!this.newStaff.name || !this.newStaff.rut || !this.newStaff.address ||
-                !this.newStaff.phone || !this.newStaff.email || !this.newStaff.occupation) {
-                alert('Todos los campos son obligatorios.');
-                return;
-            }
 
-            const staffData = { ...this.newStaff };
-
-            // Llamada a la API para agregar personal al staff
-            axios.post('http://localhost:3000/api/staff/', staffData)
-                .then(response => {
-                    console.log('Personal agregado:', response.data);
-                    this.closeAddStaffModal();
-                })
-                .catch(error => {
-                    console.error('Error al agregar personal:', error);
-                });
-        },
         logout() {
             alert('Sesión cerrada'); // Implementar el cierre de sesión aquí
         },
@@ -563,6 +724,57 @@ export default {
     opacity: 0.5;
 }
 
+.success-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+}
+
+.modal-content {
+    background-color: #FF007F; /* Color de fondo del modal */
+    border-radius: 10px;
+    padding: 20px;
+    width: 350px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    color: white;
+    font-family: 'Bebas Neue', sans-serif; /* Fuente para el contenido del modal */
+}
+
+.success-logo {
+    width: 80px; /* Tamaño del logo */
+    margin-bottom: 20px; /* Separación del logo respecto al mensaje */
+}
+
+.success-message {
+    font-size: 18px; /* Tamaño del mensaje de éxito */
+    margin-bottom: 20px; /* Espaciado entre el mensaje y el botón */
+}
+
+.btn-accept {
+    padding: 10px 20px;
+    background-color: black;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-family: 'Bebas Neue', sans-serif;
+    transition: background-color 0.3s;
+}
+
+.btn-accept:hover {
+    background-color: #333;
+}
+
+
 .sidebar-title {
     margin-bottom: 10px;
     font-size: 1.5em;
@@ -591,6 +803,23 @@ export default {
     width: 30px;
     text-align: center;
 }
+
+.generate-password {
+    background-color: #ff007f;
+    color: white;
+    padding: 8px 12px;
+    font-family: 'Bebas Neue', sans-serif;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+.generate-password:hover {
+    background-color: #e6006f;
+}
+
 
 .option-text {
     flex-grow: 1;
@@ -777,5 +1006,24 @@ export default {
     .dashboard-title {
         display: none;
     }
+}
+
+input[type="number"].no-spin::-webkit-outer-spin-button,
+input[type="number"].no-spin::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"].no-spin {
+    -moz-appearance: textfield;
+    /* Firefox */
+    appearance: textfield;
+    /* Otros navegadores */
+}
+
+/* Estilos adicionales, si es necesario */
+input[type="number"] {
+    width: 100%;
+    box-sizing: border-box;
 }
 </style>
