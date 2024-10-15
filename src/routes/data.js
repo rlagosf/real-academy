@@ -33,7 +33,7 @@ router.get('/roles', (req, res) => {
     });
 });
 
-
+// Endpoint para obtener contactos
 router.get('/contact', (req, res) => {
     connection.query('SELECT name, phone, address, email, source FROM contact_forms ORDER BY created_at DESC', (error, results) => {
         if (error) {
@@ -43,11 +43,21 @@ router.get('/contact', (req, res) => {
     });
 });
 
+// Endpoint para obtener fuentes
 router.get('/sources', (req, res) => {
     connection.query('SELECT * FROM how_meet_academy', (error, results) => {
-        console.log(results)
         if (error) {
             return res.status(500).json({ error: 'Error en la consulta de contactos' });
+        }
+        res.json(results);
+    });
+});
+
+// Endpoint para obtener profesiones
+router.get('/professions', (req, res) => {
+    connection.query('SELECT * FROM professions_academy', (error, results) => {
+        if (error) {
+            return res.status(500).json({ error: 'Error al obtener las profesiones' });
         }
         res.json(results);
     });

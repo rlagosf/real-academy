@@ -162,44 +162,49 @@
 
             <!-- Modal para agregar staff -->
             <div v-if="isAddStaffModalVisible" class="modal modal-visible modal-active modal-extra">
-                <button class="close-modal" @click="closeAddStaffModal">✖</button>
-                <h3>Agregar Personal para Staff</h3>
+    <button class="close-modal" @click="closeAddStaffModal">✖</button>
+    <h3>Agregar Personal para Staff</h3>
 
-                <div class="input-group">
-                    <label for="staff-name">Nombre:</label>
-                    <input id="staff-name" v-model="newStaff.name" placeholder="Nombre" />
-                </div>
+    <div class="input-group">
+        <label for="staff-name">Nombre:</label>
+        <input id="staff-name" v-model="newStaff.name" placeholder="Nombre" />
+    </div>
 
-                <div class="input-group">
-                    <label for="staff-rut">RUT:</label>
-                    <input id="staff-rut" v-model="newStaff.rut" placeholder="RUT" type="text" maxlength="9"
-                        @input="validateRutInput('staff')" />
-                </div>
+    <div class="input-group">
+        <label for="staff-rut">RUT:</label>
+        <input id="staff-rut" v-model="newStaff.rut" placeholder="RUT" type="text" maxlength="9"
+            @input="validateRutInput('staff')" />
+    </div>
 
-                <div class="input-group">
-                    <label for="staff-address">Dirección:</label>
-                    <input id="staff-address" v-model="newStaff.address" placeholder="Dirección" />
-                </div>
+    <div class="input-group">
+        <label for="staff-address">Dirección:</label>
+        <input id="staff-address" v-model="newStaff.address" placeholder="Dirección" />
+    </div>
 
-                <div class="input-group">
-                    <label for="staff-phone">Teléfono:</label>
-                    <input id="staff-phone" v-model="newStaff.phone" placeholder="Teléfono" type="tel" required
-                        pattern="[0-9]*" maxlength="9" @input="validatePhone" ref="formInputs" />
-                </div>
+    <div class="input-group">
+        <label for="staff-phone">Teléfono:</label>
+        <input id="staff-phone" v-model="newStaff.phone" placeholder="Teléfono" type="tel" required
+            pattern="[0-9]*" maxlength="9" @input="validatePhone" ref="formInputs" />
+    </div>
 
+    <div class="input-group">
+        <label for="staff-email">Email:</label>
+        <input id="staff-email" v-model="newStaff.email" placeholder="Email" />
+    </div>
 
-                <div class="input-group">
-                    <label for="staff-email">Email:</label>
-                    <input id="staff-email" v-model="newStaff.email" placeholder="Email" />
-                </div>
+    <div class="input-group">
+        <label for="staff-occupation">Ocupación:</label>
+        <select id="staff-occupation" v-model="newStaff.occupation">
+            <option disabled value="">Seleccione una ocupación</option>
+            <option v-for="profession in professions" :key="profession.id" :value="profession.id">
+                {{ profession.name }}
+            </option>
+        </select>
+    </div>
 
-                <div class="input-group">
-                    <label for="staff-occupation">Ocupación:</label>
-                    <input id="staff-occupation" v-model="newStaff.occupation" placeholder="Ocupación" />
-                </div>
+    <button @click="addNewStaff" class="add-button">Agregar</button>
+</div>
 
-                <button @click="addNewStaff" class="add-button">Agregar</button>
-            </div>
         </div>
     </div>
 </template>
@@ -267,6 +272,7 @@ export default {
             footballPositions: [], // Para almacenar las posiciones de fútbol
             categories: [], // Para almacenar las categorías
             roles: [], // Para almacenar los roles extraídos del backend
+            professions: [], // Aquí se almacenarán las ocupaciones desde el servidor
             errors: {} // Para almacenar errores de validación
         };
     },
@@ -279,6 +285,7 @@ export default {
         this.fetchFootballPositions();
         this.fetchCategories();
         this.fetchRoles(); // Cargar roles cuando se monta el componente
+        this.fetchProfessions();
     },
     methods: {
         toggleSidebar() {
@@ -333,6 +340,15 @@ export default {
                 console.error('Error al obtener los roles:', error);
             }
         },
+        async fetchProfessions() {
+      try {
+        const response = await axios.get('http://localhost:3000/api/data/professions');
+        this.professions = response.data; // Almacena las ocupaciones
+      } catch (error) {
+        console.error('Error al obtener las ocupaciones:', error);
+        alert('No se pudo cargar la lista de ocupaciones.');
+      }
+    },
         validateRutInput(type) {
             // Según el tipo, actualizamos el campo de RUT correspondiente
             const rut = type === 'staff' ? this.newStaff.rut : this.newStudent.rut;

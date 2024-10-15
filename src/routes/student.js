@@ -44,4 +44,34 @@ router.delete('/:rut', (req, res) => {
     });
 });
 
+router.put('/:rut', (req, res) => {
+    console.log('Ruta PUT alcanzada');
+    const { rut } = req.params; // Obtener el 'rut' del parámetro en la URL
+    const { weight, height, age, football_position, category_id } = req.body; // Obtener los nuevos valores del body
+
+    // Verificar que se reciban los datos necesarios
+    if (!weight || !height || !age || !football_position || !category_id) {
+        return res.status(400).json({ error: 'Faltan datos para actualizar' });
+    }
+
+    // Actualizar el estudiante en la base de datos
+    const updateQuery = `
+        UPDATE subscribed_kids 
+        SET weight = ?, height = ?, age = ?, football_position = ?, category_id = ?
+        WHERE rut = ?;
+    `;
+    
+    connection.query(updateQuery, [weight, height, age, football_position, category_id, rut], (error, results) => {
+        if (error) {
+            return res.status(500).json({ error: 'Error al actualizar el estudiante' });
+        }
+
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ error: 'Estudiante no encontrado' });
+        }
+
+        res.status(200).json({ message: 'Estudiante actualizado correctamente' });
+    });
+});
+
 module.exports = router;

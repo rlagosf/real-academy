@@ -1,33 +1,19 @@
 <template>
   <div class="login-container">
-    <!-- Botón para volver a Home -->
     <button class="btn-home" @click="goHome">Volver al inicio</button>
-
     <div class="login-box">
-      <!-- Logo de la Academia -->
       <img src="/assets/logos/logo-sin-fondo.png" alt="Logo" class="login-logo" />
-
-      <!-- Título del Formulario -->
       <h2>Iniciar Sesión</h2>
-
-      <!-- Formulario de Login -->
       <form @submit.prevent="login">
-        <!-- Campo de Usuario -->
         <div class="input-group">
           <label for="username">Usuario</label>
           <input type="text" id="username" v-model="username" placeholder="Ingresa tu usuario" required />
         </div>
-
-        <!-- Campo de Contraseña -->
         <div class="input-group">
           <label for="password">Contraseña</label>
           <input type="password" id="password" v-model="password" placeholder="Ingresa tu contraseña" required />
         </div>
-
-        <!-- Botón de Ingresar -->
         <button type="submit" class="btn-login">Ingresar</button>
-
-        <!-- Mensaje de error si la autenticación falla -->
         <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
       </form>
     </div>
@@ -35,6 +21,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'LoginReal',
   data() {
@@ -46,18 +34,27 @@ export default {
   },
   methods: {
     async login() {
-      // Simulando el login (aquí irá la autenticación real)
-      if (this.username === 'admin' && this.password === '12345') {
-        // Autenticación exitosa
-        alert('¡Login Exitoso!');
-        this.$router.push({ name: 'Dashboard' }); // Redirigir al Dashboard (adaptar ruta)
-      } else {
-        // Autenticación fallida
-        this.errorMessage = 'Usuario o contraseña incorrectos';
+      try {
+        const response = await axios.post('http://localhost:3000/api/user/login', {
+          username: this.username,
+          password: this.password
+        });
+
+        if (response.data.success) {
+          // Autenticación exitosa
+          alert('¡Login Exitoso!');
+          this.$router.push({ name: 'Dashboard' });
+        } else {
+          // Si el login falla, mostrar mensaje de error
+          this.errorMessage = response.data.message;
+        }
+      } catch (error) {
+        console.error('Error en la autenticación:', error);
+        this.errorMessage = 'Hubo un error en el servidor';
       }
     },
     goHome() {
-      this.$router.push({ name: 'Home' }); // Redirigir a Home
+      this.$router.push({ name: 'Home' });
     }
   }
 };

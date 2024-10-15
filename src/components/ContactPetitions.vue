@@ -8,9 +8,10 @@
       <!-- Botón para redirigir al Dashboard en la esquina superior derecha -->
       <button class="back-to-dashboard" @click="goToDashboard">
         <span class="button-text">
-          <i class="fas fa-arrow-left"></i> Volver al Dashboard
+          <i class="fas fa-arrow-left back-arrow"></i> 
+          <span class="back-text">Volver al Dashboard</span>
         </span>
-        <i class="fas fa-door-open"></i> <!-- Icono de abrir la puerta que aparece en pantallas pequeñas -->
+        <i class="fas fa-door-open door-icon"></i> <!-- Icono de abrir la puerta que aparece en pantallas pequeñas -->
       </button>
 
       <img src="/assets/logos/logo-en-negativo.png" alt="Logo" class="login-logo" />
@@ -32,7 +33,7 @@
             <td>{{ petition.phone }}</td>
             <td>{{ petition.address }}</td>
             <td>{{ petition.email }}</td>
-            <td>{{ petition.source }}</td>
+            <td>{{ getSourceName(petition.source) }}</td>
           </tr>
         </tbody>
       </table>
@@ -52,11 +53,13 @@ export default {
   data() {
     return {
       contactPetitions: [],
-      loading: true // Indica si los datos se están cargando
+      loading: true, // Indica si los datos se están cargando
+      sources: []
     };
   },
   created() {
     this.fetchContactPetitions();
+    this.fetchSources();
   },
   methods: {
     async fetchContactPetitions() {
@@ -69,6 +72,19 @@ export default {
         this.loading = false; // Desactiva la carga una vez obtenidos los datos
       }
     },
+    async fetchSources() {
+      try {
+        const response = await axios.get('http://localhost:3000/api/data/sources');
+        console.log('Sources obtenidos:', response.data);
+        this.sources = response.data;  // Guardar las profesiones en el estado
+      } catch (error) {
+        console.error('Error al obtener las profesiones:', error);
+      }
+    },
+    getSourceName(sourceId) {
+    const source = this.sources.find(source => source.id === sourceId);
+    return source ? source.name : 'Desconocido'; // Retorna 'Desconocido' si no se encuentra el ID
+  },
     // Método para redirigir al Dashboard usando $router
     goToDashboard() {
       this.$router.push({ name: 'Dashboard' }); // Usar $router en lugar de useRouter
@@ -83,7 +99,7 @@ export default {
   padding: 20px;
   font-family: 'Bebas Neue', sans-serif;
   text-align: center;
-  position: relative; /* Para que el botón se posicione correctamente dentro del contenedor */
+  position: relative;
 }
 
 .back-to-dashboard {
@@ -100,23 +116,64 @@ export default {
   font-size: 14px;
   display: flex;
   align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: padding 0.3s ease-in-out;
 }
 
-.back-to-dashboard i {
+.back-to-dashboard .back-arrow {
   margin-right: 8px;
-  display: inline-block; /* Mostrar el ícono de la flecha en pantallas grandes */
 }
 
-.back-to-dashboard .fas.fa-door-open {
-  display: none; /* Ocultar el ícono de la puerta abierta en pantallas grandes */
+.back-to-dashboard .door-icon {
+  display: none;
+}
+
+.back-to-dashboard .back-text {
+  display: inline-block;
 }
 
 .back-to-dashboard:hover {
   background-color: #e6006f;
 }
 
-.button-text {
-  display: inline-block;
+/* Responsividad */
+@media (max-width: 768px) {
+  .back-to-dashboard {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .back-to-dashboard .back-arrow {
+    display: none; /* Ocultar la flecha */
+  }
+
+  .back-to-dashboard .door-icon {
+    display: inline-block; /* Mostrar el icono de la puerta */
+  }
+
+  .back-to-dashboard .back-text {
+    display: none; /* Ocultar el texto en pantallas pequeñas */
+  }
+}
+
+@media (max-width: 480px) {
+  .back-to-dashboard {
+    padding: 6px 10px;
+    font-size: 10px;
+  }
+
+  .back-to-dashboard .back-arrow {
+    display: none; /* Ocultar la flecha */
+  }
+
+  .back-to-dashboard .door-icon {
+    display: inline-block; /* Mostrar el icono de la puerta */
+  }
+
+  .back-to-dashboard .back-text {
+    display: none; /* Ocultar el texto en pantallas aún más pequeñas */
+  }
 }
 
 .login-logo {
@@ -134,15 +191,9 @@ export default {
   font-size: 2em;
 }
 
-/* Tabla responsive */
-.table-responsive {
-  overflow-x: auto; /* Añadir scroll horizontal para dispositivos pequeños */
-}
-
 table {
   width: 100%;
-  border-collapse: absolute;
-  border-spacing: 1;
+  border-collapse: collapse;
   margin-top: 20px;
   border-radius: 0px;
   overflow: hidden;
@@ -161,70 +212,57 @@ th {
   text-align: center;
 }
 
-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #2c3e50;
-}
+/* Ajustes para dispositivos pequeños */
+@media (max-width: 375px) {
+  .contact-petitions-container {
+    overflow-x: auto; /* Permitir scroll horizontal si el contenido se sale */
+    padding: 10px; /* Reducir el padding */
+  }
 
-button i {
-  font-size: 20px;
-}
-
-button:hover {
-  opacity: 0.7;
-}
-
-/* Reglas para dispositivos pequeños */
-@media (max-width: 768px) {
-  .title-center {
-    font-size: 1.5em; /* Ajustar el tamaño del título */
+  table {
+    width: 100%; /* Asegurarse de que la tabla no sea más ancha que el contenedor */
+    table-layout: fixed; /* Forzar que las columnas tengan un ancho fijo para evitar desbordes */
+    overflow-x: auto;
+    display: block; /* Hacer que la tabla sea bloque para permitir scroll horizontal */
   }
 
   th, td {
-    padding: 8px;
-    font-size: 0.9em; /* Reducir el tamaño de texto en las celdas */
+    padding: 10px 5px; /* Reducir el padding de las celdas */
+    white-space: nowrap; /* Evitar que el texto se rompa en varias líneas */
   }
 
-  .back-to-dashboard .button-text {
+  .back-to-dashboard {
+    padding: 6px 8px;
+    font-size: 10px;
+  }
+
+  .back-to-dashboard .back-arrow {
+    display: none;
+  }
+
+  .back-to-dashboard .door-icon {
     display: inline-block;
   }
 
-  .back-to-dashboard .fas.fa-door-open {
-    display: none; /* El ícono de la puerta sigue oculto en pantallas pequeñas */
+  .back-to-dashboard .back-text {
+    display: none;
   }
 }
 
-/* Reglas para dispositivos muy pequeños (e.g., 375x667) */
-@media (max-width: 480px) {
-  .login-logo {
-    width: 120px; /* Ajustar el tamaño del logo */
+@media (max-width: 667px) {
+  .table-responsive {
+    overflow-x: auto; /* Agregar scroll si la tabla se desborda */
+  }
+
+  table {
+    display: block; /* Convertir la tabla en un bloque para scroll */
+    width: 100%; /* Evitar que se salga del contenedor */
   }
 
   th, td {
-    padding: 6px;
-    font-size: 0.8em; /* Reducir aún más el tamaño de texto en las celdas */
-  }
-
-  button i {
-    font-size: 14px; /* Reducir el tamaño de los íconos de los botones */
-  }
-
-  .back-to-dashboard .button-text {
-    display: none; /* Ocultar el texto en pantallas muy pequeñas */
-  }
-
-  .back-to-dashboard .fas.fa-arrow-left {
-    display: none; /* Ocultar el ícono de la flecha en pantallas muy pequeñas */
-  }
-
-  .back-to-dashboard .fas.fa-door-open {
-    display: inline-block; /* Mostrar el ícono de abrir la puerta */
-  }
-
-  .table-responsive {
-    overflow-x: scroll; /* Asegurarse de que la tabla pueda desplazarse horizontalmente en pantallas muy pequeñas */
+    padding: 8px; /* Ajustar padding para celdas en pantallas pequeñas */
+    white-space: nowrap; /* Mantener contenido en una sola línea */
   }
 }
+
 </style>

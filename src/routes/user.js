@@ -1,4 +1,3 @@
-// routes/user.js
 const express = require('express');
 const router = express.Router();
 const connection = require('../db');
@@ -39,13 +38,45 @@ router.post('/', [
 
         // Si el usuario se agregó correctamente, enviar la contraseña por correo
         sendPasswordEmail(email, generatedPassword)
-    .then(() => {
-        res.status(201).json({ message: 'Usuario agregado exitosamente y contraseña enviada por correo' });
-    })
-    .catch((emailError) => {
-        console.error('Error al enviar el correo:', emailError);
-        res.status(500).json({ message: 'Usuario agregado pero hubo un error al enviar el correo' });
+        .then(() => {
+            res.status(201).json({ message: 'Usuario agregado exitosamente y contraseña enviada por correo' });
+        })
+        .catch((emailError) => {
+            console.error('Error al enviar el correo:', emailError);
+            res.status(500).json({ message: 'Usuario agregado pero hubo un error al enviar el correo' });
+        });
     });
+});
+
+// Endpoint de inicio de sesión
+router.post('/login', async (req, res) => {
+    const { username, password } = req.body;
+
+    // Consultar el usuario por su nombre de usuario
+    const query = `SELECT * FROM users_academy WHERE username = ?`;
+    connection.query(query, [username], async (err, results) => {
+        if (err) {
+            console.error('Error al consultar la base de datos:', err);
+            return res.status(500).json({ success: false, message: 'Error en el servidor' });
+        }
+
+        if (results.length === 0) {
+            // El usuario no existe
+            return res.status(400).json({ success: false, message: 'Usuario o contraseña incorrectos' });
+        }
+
+        const user = results[0];
+
+        // Comparar la contraseña encriptada con la contraseña proporcionada
+        const isPasswordCorrect = await bcrypt.compare(password, user.password);
+        
+        if (!isPasswordCorrect) {
+            // Contraseña incorrecta
+            return res.status(400).json({ success: false, message: 'Usuario o contraseña incorrectos' });
+        }
+
+        // Si la autenticación es exitosa, enviar respuesta
+        res.json({ success: true, message: 'Autenticación exitosa', userId: user.id, name: user.name });
     });
 });
 
