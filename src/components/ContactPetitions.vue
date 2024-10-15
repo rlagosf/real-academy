@@ -75,7 +75,7 @@ export default {
     async fetchSources() {
       try {
         const response = await axios.get('http://localhost:3000/api/data/sources');
-        console.log('Sources obtenidos:', response.data);
+        //console.log('Sources obtenidos:', response.data);
         this.sources = response.data;  // Guardar las profesiones en el estado
       } catch (error) {
         console.error('Error al obtener las profesiones:', error);

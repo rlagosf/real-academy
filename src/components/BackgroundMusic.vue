@@ -29,7 +29,7 @@ export default {
       if (backgroundMusic.paused) {
         // @ts-ignore
         backgroundMusic.play().catch((error) => {
-          console.log('Error al intentar reproducir música:', error);
+          //console.log('Error al intentar reproducir música:', error);
         });
       }
     }

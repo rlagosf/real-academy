@@ -100,10 +100,10 @@ async function sendPasswordEmail(email, password) {
     return new Promise((resolve, reject) => {
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
-                console.log('Error al enviar el correo:', error);
+                //console.log('Error al enviar el correo:', error);
                 reject(error);
             } else {
-                console.log('Correo enviado:', info.response);
+                //console.log('Correo enviado:', info.response);
                 resolve(info);
             }
         });

@@ -96,7 +96,7 @@ export default {
     async fetchStaffMembers() {
       try {
         const response = await axios.get('http://localhost:3000/api/staff');
-        console.log('Respuesta de la API:', response.data);  // Mostrar la respuesta de la API
+        //console.log('Respuesta de la API:', response.data);  // Mostrar la respuesta de la API
         this.staffMembers = response.data;  // Asignar directamente los datos del staff
       } catch (error) {
         console.error('Error al obtener los miembros del staff:', error);
@@ -107,7 +107,7 @@ export default {
     async fetchProfessions() {
       try {
         const response = await axios.get('http://localhost:3000/api/data/professions');
-        console.log('Profesiones obtenidas:', response.data);
+        //console.log('Profesiones obtenidas:', response.data);
         this.professions = response.data;  // Guardar las profesiones en el estado
       } catch (error) {
         console.error('Error al obtener las profesiones:', error);

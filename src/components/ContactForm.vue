@@ -129,7 +129,7 @@ getSources() {
       axios.get('http://localhost:3000/api/data/sources')  // Ajusta la URL según tu configuración
         .then((response) => {
           this.sources = response.data;  // Guardamos los datos en el array sources
-          console.log(response.data)
+          //console.log(response.data)
         })
         .catch((error) => {
           console.error("Hubo un error al obtener las fuentes:", error);

@@ -45,7 +45,7 @@ router.delete('/:rut', (req, res) => {
 });
 
 router.put('/:rut', (req, res) => {
-    console.log('Ruta PUT alcanzada');
+    //console.log('Ruta PUT alcanzada');
     const { rut } = req.params; // Obtener el 'rut' del parámetro en la URL
     const { weight, height, age, football_position, category_id } = req.body; // Obtener los nuevos valores del body
 

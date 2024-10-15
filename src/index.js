@@ -21,5 +21,5 @@ app.use('/api/user', userRoutes);
 app.use('/api/data', dataRoutes);
 
 app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+  //console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });

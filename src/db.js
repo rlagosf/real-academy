@@ -15,7 +15,7 @@ connection.connect((err) => {
         console.error('Error de conexión: ' + err.stack);
         return;
     }
-    console.log('Conectado como id ' + connection.threadId);
+    //console.log('Conectado como id ' + connection.threadId);
 });
 
 module.exports = connection;

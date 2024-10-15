@@ -317,7 +317,7 @@ export default {
             try {
                 const response = await axios.get('http://localhost:3000/api/data/football-positions');
                 this.footballPositions = response.data;
-                console.log('Posiciones de fútbol:', this.footballPositions);
+                //console.log('Posiciones de fútbol:', this.footballPositions);
             } catch (error) {
                 console.error('Error al obtener las posiciones de fútbol:', error);
             }
@@ -326,7 +326,7 @@ export default {
             try {
                 const response = await axios.get('http://localhost:3000/api/data/categories');
                 this.categories = response.data;
-                console.log('Categorías:', this.categories);
+                //console.log('Categorías:', this.categories);
             } catch (error) {
                 console.error('Error al obtener las categorías:', error);
             }
@@ -335,7 +335,7 @@ export default {
             try {
                 const response = await axios.get('http://localhost:3000/api/data/roles');
                 this.roles = response.data;
-                console.log('Roles de usuarios:', this.roles);
+                //console.log('Roles de usuarios:', this.roles);
             } catch (error) {
                 console.error('Error al obtener los roles:', error);
             }
@@ -448,8 +448,8 @@ export default {
             axios.post('http://localhost:3000/api/staff', staffData)
                 .then(response => {
                     // Asumiendo que la respuesta es exitosa
-                    console.log('Personal agregado correctamente:', response.data);
-                    console.log(staffData);
+                    //console.log('Personal agregado correctamente:', response.data);
+                    //console.log(staffData);
                     this.closeAddStaffModal(); // Cierra el modal al agregar el personal
                 })
                 .catch(error => {
@@ -495,8 +495,8 @@ export default {
             axios.post('http://localhost:3000/api/student', studentData)
                 .then(response => {
                     // Asumiendo que la respuesta es exitosa
-                    console.log('Estudiante agregado correctamente:', response.data);
-                    console.log(studentData);
+                    //console.log('Estudiante agregado correctamente:', response.data);
+                    //console.log(studentData);
                     this.closeAddStudentModal(); // Cierra el modal al agregar el estudiante
                 })
                 .catch(error => {
@@ -550,7 +550,7 @@ export default {
             // Llamar a la API para agregar el usuario
             axios.post('http://localhost:3000/api/user', userData)
                 .then(response => {
-                    console.log('Usuario agregado:', response.data);
+                    //console.log('Usuario agregado:', response.data);
 
                     // Asignar el mensaje de éxito con el correo
                     this.successMessage = `CORREO ENVIADO SATISFACTORIAMENTE A ${this.newUser.email} FAVOR REVISE SU BANDEJA DE ENTRADA`;

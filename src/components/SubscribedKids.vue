@@ -164,7 +164,7 @@ export default {
       try {
         const response = await axios.get('http://localhost:3000/api/student');
         this.kids = response.data;
-        console.log('Datos de estudiantes obtenidos:', this.kids); // Log para confirmar que los datos llegan
+        //console.log('Datos de estudiantes obtenidos:', this.kids); // Log para confirmar que los datos llegan
       } catch (error) {
         console.error('Error al obtener los alumnos inscritos:', error);
       } finally {
@@ -220,18 +220,18 @@ export default {
     deleteKid(rut) {
       this.kidToDelete = rut; // Guardar el rut del niño a eliminar
       this.showDeleteModal = true; // Mostrar el modal de eliminación
-      console.log('Modal de eliminación activado para RUT:', rut); // Verificar si se activa el modal
+      //console.log('Modal de eliminación activado para RUT:', rut); // Verificar si se activa el modal
     }
     ,
 
 
     // Confirmar eliminación del niño
     confirmDelete() {
-      console.log('Confirmando eliminación para RUT:', this.kidToDelete); // Log antes de eliminar
+      //console.log('Confirmando eliminación para RUT:', this.kidToDelete); // Log antes de eliminar
       axios.delete(`http://localhost:3000/api/student/${this.kidToDelete}`)
         .then(() => {
           this.kids = this.kids.filter(k => k.rut !== this.kidToDelete);
-          console.log('Eliminado exitosamente:', this.kidToDelete); // Log para confirmar la eliminación
+          //console.log('Eliminado exitosamente:', this.kidToDelete); // Log para confirmar la eliminación
           //alert('Registro eliminado');
           this.showDeleteModal = false;
         })
@@ -254,7 +254,7 @@ export default {
 
     // Guardar los cambios editados
     saveChanges() {
-      console.log('Datos editados:', this.editingKid); // Log para verificar los datos a enviar
+      //console.log('Datos editados:', this.editingKid); // Log para verificar los datos a enviar
       axios.put(`http://localhost:3000/api/student/${this.editingKid.rut}`, {
         weight: this.editingKid.weight,
         height: this.editingKid.height,
@@ -268,7 +268,7 @@ export default {
             this.kids.splice(index, 1, { ...this.editingKid });
           }
           this.showEditModal = false;
-          console.log('Cambios guardados exitosamente:', this.editingKid); // Log para confirmar que los cambios se guardaron
+          //console.log('Cambios guardados exitosamente:', this.editingKid); // Log para confirmar que los cambios se guardaron
           //alert('Información actualizada');
         })
         .catch(error => {
