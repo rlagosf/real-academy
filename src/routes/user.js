@@ -52,31 +52,36 @@ router.post('/', [
 router.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
-    // Consultar el usuario por su nombre de usuario
-    const query = `SELECT * FROM users_academy WHERE username = ?`;
+    // Verificar si el usuario existe
+    const query = 'SELECT * FROM users_academy WHERE username = ?';
     connection.query(query, [username], async (err, results) => {
         if (err) {
-            console.error('Error al consultar la base de datos:', err);
-            return res.status(500).json({ success: false, message: 'Error en el servidor' });
+            console.error('Error en la consulta:', err);
+            return res.status(500).json({ message: 'Error en el servidor' });
         }
 
+        // Si no se encuentra el usuario
         if (results.length === 0) {
-            // El usuario no existe
-            return res.status(400).json({ success: false, message: 'Usuario o contraseña incorrectos' });
+            return res.status(401).json({ message: 'Usuario no encontrado' });
         }
 
-        const user = results[0];
+        const user = results[0];  // El usuario encontrado
+        const validPassword = await bcrypt.compare(password, user.password);
 
-        // Comparar la contraseña encriptada con la contraseña proporcionada
-        const isPasswordCorrect = await bcrypt.compare(password, user.password);
-        
-        if (!isPasswordCorrect) {
-            // Contraseña incorrecta
-            return res.status(400).json({ success: false, message: 'Usuario o contraseña incorrectos' });
+        // Verificar si la contraseña es correcta
+        if (!validPassword) {
+            return res.status(401).json({ message: 'Contraseña incorrecta' });
         }
 
-        // Si la autenticación es exitosa, enviar respuesta
-        res.json({ success: true, message: 'Autenticación exitosa', userId: user.id, name: user.name });
+        // Si las credenciales son válidas, retornamos el rol_id y los datos del usuario
+        return res.status(200).json({
+            message: 'Autenticación exitosa',
+            user: {
+                id: user.id,
+                username: user.username,
+                rol_id: user.rol_id // Devolvemos el rol_id para controlar el acceso en el frontend
+            }
+        });
     });
 });
 

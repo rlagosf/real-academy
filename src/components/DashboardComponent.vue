@@ -149,12 +149,12 @@
 
                 <!-- Ventana emergente de confirmación (SuccessModal) -->
                 <div v-if="isSuccessVisible" class="success-modal">
-    <div class="modal-content">
-        <img src="/assets/logos/logo-con-blanco-sin-fondo.png" alt="Logo" class="success-logo" />
-        <h3 class="success-message">{{ successMessage }}</h3>
-        <button class="btn-accept" @click="redirectToDashboard">Aceptar</button>
-    </div>
-</div>
+                    <div class="modal-content">
+                        <img src="/assets/logos/logo-con-blanco-sin-fondo.png" alt="Logo" class="success-logo" />
+                        <h3 class="success-message">{{ successMessage }}</h3>
+                        <button class="btn-accept" @click="redirectToDashboard">Aceptar</button>
+                    </div>
+                </div>
             </div>
 
 
@@ -162,48 +162,48 @@
 
             <!-- Modal para agregar staff -->
             <div v-if="isAddStaffModalVisible" class="modal modal-visible modal-active modal-extra">
-    <button class="close-modal" @click="closeAddStaffModal">✖</button>
-    <h3>Agregar Personal para Staff</h3>
+                <button class="close-modal" @click="closeAddStaffModal">✖</button>
+                <h3>Agregar Personal para Staff</h3>
 
-    <div class="input-group">
-        <label for="staff-name">Nombre:</label>
-        <input id="staff-name" v-model="newStaff.name" placeholder="Nombre" />
-    </div>
+                <div class="input-group">
+                    <label for="staff-name">Nombre:</label>
+                    <input id="staff-name" v-model="newStaff.name" placeholder="Nombre" />
+                </div>
 
-    <div class="input-group">
-        <label for="staff-rut">RUT:</label>
-        <input id="staff-rut" v-model="newStaff.rut" placeholder="RUT" type="text" maxlength="9"
-            @input="validateRutInput('staff')" />
-    </div>
+                <div class="input-group">
+                    <label for="staff-rut">RUT:</label>
+                    <input id="staff-rut" v-model="newStaff.rut" placeholder="RUT" type="text" maxlength="9"
+                        @input="validateRutInput('staff')" />
+                </div>
 
-    <div class="input-group">
-        <label for="staff-address">Dirección:</label>
-        <input id="staff-address" v-model="newStaff.address" placeholder="Dirección" />
-    </div>
+                <div class="input-group">
+                    <label for="staff-address">Dirección:</label>
+                    <input id="staff-address" v-model="newStaff.address" placeholder="Dirección" />
+                </div>
 
-    <div class="input-group">
-        <label for="staff-phone">Teléfono:</label>
-        <input id="staff-phone" v-model="newStaff.phone" placeholder="Teléfono" type="tel" required
-            pattern="[0-9]*" maxlength="9" @input="validatePhone" ref="formInputs" />
-    </div>
+                <div class="input-group">
+                    <label for="staff-phone">Teléfono:</label>
+                    <input id="staff-phone" v-model="newStaff.phone" placeholder="Teléfono" type="tel" required
+                        pattern="[0-9]*" maxlength="9" @input="validatePhone" ref="formInputs" />
+                </div>
 
-    <div class="input-group">
-        <label for="staff-email">Email:</label>
-        <input id="staff-email" v-model="newStaff.email" placeholder="Email" />
-    </div>
+                <div class="input-group">
+                    <label for="staff-email">Email:</label>
+                    <input id="staff-email" v-model="newStaff.email" placeholder="Email" />
+                </div>
 
-    <div class="input-group">
-        <label for="staff-occupation">Ocupación:</label>
-        <select id="staff-occupation" v-model="newStaff.occupation">
-            <option disabled value="">Seleccione una ocupación</option>
-            <option v-for="profession in professions" :key="profession.id" :value="profession.id">
-                {{ profession.name }}
-            </option>
-        </select>
-    </div>
+                <div class="input-group">
+                    <label for="staff-occupation">Ocupación:</label>
+                    <select id="staff-occupation" v-model="newStaff.occupation">
+                        <option disabled value="">Seleccione una ocupación</option>
+                        <option v-for="profession in professions" :key="profession.id" :value="profession.id">
+                            {{ profession.name }}
+                        </option>
+                    </select>
+                </div>
 
-    <button @click="addNewStaff" class="add-button">Agregar</button>
-</div>
+                <button @click="addNewStaff" class="add-button">Agregar</button>
+            </div>
 
         </div>
     </div>
@@ -341,14 +341,14 @@ export default {
             }
         },
         async fetchProfessions() {
-      try {
-        const response = await axios.get('http://localhost:3000/api/data/professions');
-        this.professions = response.data; // Almacena las ocupaciones
-      } catch (error) {
-        console.error('Error al obtener las ocupaciones:', error);
-        alert('No se pudo cargar la lista de ocupaciones.');
-      }
-    },
+            try {
+                const response = await axios.get('http://localhost:3000/api/data/professions');
+                this.professions = response.data; // Almacena las ocupaciones
+            } catch (error) {
+                console.error('Error al obtener las ocupaciones:', error);
+                alert('No se pudo cargar la lista de ocupaciones.');
+            }
+        },
         validateRutInput(type) {
             // Según el tipo, actualizamos el campo de RUT correspondiente
             const rut = type === 'staff' ? this.newStaff.rut : this.newStudent.rut;
@@ -754,24 +754,30 @@ export default {
 }
 
 .modal-content {
-    background-color: #FF007F; /* Color de fondo del modal */
+    background-color: #FF007F;
+    /* Color de fondo del modal */
     border-radius: 10px;
     padding: 20px;
     width: 350px;
     text-align: center;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     color: white;
-    font-family: 'Bebas Neue', sans-serif; /* Fuente para el contenido del modal */
+    font-family: 'Bebas Neue', sans-serif;
+    /* Fuente para el contenido del modal */
 }
 
 .success-logo {
-    width: 80px; /* Tamaño del logo */
-    margin-bottom: 20px; /* Separación del logo respecto al mensaje */
+    width: 80px;
+    /* Tamaño del logo */
+    margin-bottom: 20px;
+    /* Separación del logo respecto al mensaje */
 }
 
 .success-message {
-    font-size: 18px; /* Tamaño del mensaje de éxito */
-    margin-bottom: 20px; /* Espaciado entre el mensaje y el botón */
+    font-size: 18px;
+    /* Tamaño del mensaje de éxito */
+    margin-bottom: 20px;
+    /* Espaciado entre el mensaje y el botón */
 }
 
 .btn-accept {
