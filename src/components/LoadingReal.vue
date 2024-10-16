@@ -1,7 +1,7 @@
 <template>
     <div class="loading-container">
       <div class="loading-content">
-        <img src="/assets/logos/logo-en-negativo.png" alt="Logo de la Academia" class="logo"/>
+        <img src="/assets/logos/logo-en-negativo.png" alt="logo" class="logo"/>
         <p>Espere un momento por favor...</p>
         <div class="progress-bar">
           <div class="progress-fill"></div>

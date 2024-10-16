@@ -75,8 +75,15 @@ export default {
       }
     },
     goToLogin() {
-      this.$router.push('/login'); // Cambia a la ruta de inicio de sesión
+    // Verificar si ya hay un rol_id o username en localStorage
+    if (!localStorage.getItem('user_rol') || !localStorage.getItem('username')) {
+      // Si no hay rol_id o username, redirigir a la página de login
+      this.$router.push('/login');
+    } else {
+      // Si ya está autenticado, redirigir al dashboard u otra página segura
+      this.$router.push('/dashboard');
     }
+  }
   },
   mounted() {
     window.addEventListener('scroll', this.handleScroll);
@@ -86,6 +93,7 @@ export default {
   }
 };
 </script>
+
 
 <style scoped>
 html {

@@ -1,6 +1,7 @@
 <template>
     <div class="dashboard-container">
-        <div class="sidebar" :class="{ 'sidebar-visible': isSidebarVisible }">
+        <!-- Modificación en la condición de la sidebar -->
+        <div v-if="showSidebar && userRol !== 1" class="sidebar" :class="{ 'sidebar-visible': isSidebarVisible }">
             <button class="close-sidebar" @click="toggleSidebar">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="icon" fill="none" stroke="#ff007f"
                     stroke-width="2">
@@ -26,7 +27,7 @@
         <div class="dashboard" :class="{ 'dashboard-disabled': isSidebarVisible }">
             <nav class="navbar">
                 <button class="sidebar-toggle"
-                    v-if="!isAddStudentModalVisible && !isAddUserModalVisible && !isAddStaffModalVisible"
+                    v-if="!isAddStudentModalVisible && !isAddUserModalVisible && !isAddStaffModalVisible && userRol !== 1"
                     @click="toggleSidebar">
                     ☰
                 </button>
@@ -107,58 +108,40 @@
                 <button @click="addNewStudent" class="add-button">Agregar</button>
             </div>
 
-
-
             <!-- Modal para agregar usuario -->
+            <div v-if="isAddUserModalVisible" class="modal modal-visible modal-active modal-extra">
+                <button class="close-modal" @click="closeAddUserModal">✖</button>
+                <h3>Agregar Usuario</h3>
 
-            <div>
-                <!-- Modal para agregar usuario -->
-                <div v-if="isAddUserModalVisible" class="modal modal-visible modal-active modal-extra">
-                    <button class="close-modal" @click="closeAddUserModal">✖</button>
-                    <h3>Agregar Usuario</h3>
-
-                    <div class="input-group">
-                        <label for="user-name">Nombre:</label>
-                        <input id="user-name" v-model="newUser.name" placeholder="Nombre" maxlength="50" />
-                    </div>
-
-                    <div class="input-group">
-                        <label for="user-username">Nombre de usuario:</label>
-                        <input id="user-username" v-model="newUser.username" placeholder="Nombre de usuario"
-                            maxlength="12" />
-                    </div>
-
-                    <div class="input-group">
-                        <label for="user-email">Correo electrónico:</label>
-                        <input id="user-email" v-model="newUser.email" placeholder="Correo electrónico" type="email"
-                            required />
-                    </div>
-
-                    <div class="input-group">
-                        <label for="user-role">Rol de usuario:</label>
-                        <select id="user-role" v-model="newUser.rol_id" class="full-width">
-                            <option disabled value="">Selecciona un rol</option>
-                            <option v-for="role in roles" :key="role.id" :value="role.id">
-                                {{ role.name }}
-                            </option>
-                        </select>
-                    </div>
-
-                    <button @click="addNewUser" class="add-button">Agregar</button>
+                <div class="input-group">
+                    <label for="user-name">Nombre:</label>
+                    <input id="user-name" v-model="newUser.name" placeholder="Nombre" maxlength="50" />
                 </div>
 
-                <!-- Ventana emergente de confirmación (SuccessModal) -->
-                <div v-if="isSuccessVisible" class="success-modal">
-                    <div class="modal-content">
-                        <img src="/assets/logos/logo-con-blanco-sin-fondo.png" alt="Logo" class="success-logo" />
-                        <h3 class="success-message">{{ successMessage }}</h3>
-                        <button class="btn-accept" @click="redirectToDashboard">Aceptar</button>
-                    </div>
+                <div class="input-group">
+                    <label for="user-username">Nombre de usuario:</label>
+                    <input id="user-username" v-model="newUser.username" placeholder="Nombre de usuario"
+                        maxlength="12" />
                 </div>
+
+                <div class="input-group">
+                    <label for="user-email">Correo electrónico:</label>
+                    <input id="user-email" v-model="newUser.email" placeholder="Correo electrónico" type="email"
+                        required />
+                </div>
+
+                <div class="input-group">
+                    <label for="user-role">Rol de usuario:</label>
+                    <select id="user-role" v-model="newUser.rol_id" class="full-width">
+                        <option disabled value="">Selecciona un rol</option>
+                        <option v-for="role in roles" :key="role.id" :value="role.id">
+                            {{ role.name }}
+                        </option>
+                    </select>
+                </div>
+
+                <button @click="addNewUser" class="add-button">Agregar</button>
             </div>
-
-
-
 
             <!-- Modal para agregar staff -->
             <div v-if="isAddStaffModalVisible" class="modal modal-visible modal-active modal-extra">
@@ -204,7 +187,6 @@
 
                 <button @click="addNewStaff" class="add-button">Agregar</button>
             </div>
-
         </div>
     </div>
 </template>
@@ -222,6 +204,9 @@ export default {
     name: 'DashboardComponent',
     data() {
         return {
+            userRol: null,
+            inactivityTimeout: null,
+            inactivityTimeLimit: 5 * 60 * 1000, // 5 minutos en milisegundos
             isSidebarVisible: false,
             isAddStudentModalVisible: false,
             isAddUserModalVisible: false,
@@ -279,13 +264,27 @@ export default {
     computed: {
         isAnyModalVisible() {
             return this.isAddStudentModalVisible || this.isAddUserModalVisible || this.isAddStaffModalVisible;
+        },
+        showSidebar() {
+            return this.userRol !== 1;
         }
     },
+    created() {
+    // Obtener el rol del usuario desde localStorage
+    this.userRol = parseInt(localStorage.getItem('user_rol'));
+    },
     mounted() {
+        this.resetInactivityTimeout();
         this.fetchFootballPositions();
         this.fetchCategories();
         this.fetchRoles(); // Cargar roles cuando se monta el componente
         this.fetchProfessions();
+    },
+
+    beforeUnmount(){
+        window.removeEventListener('mousemove', this.resetInactivityTimeout);
+    window.removeEventListener('keydown', this.resetInactivityTimeout);
+    window.removeEventListener('click', this.resetInactivityTimeout);
     },
     methods: {
         toggleSidebar() {
@@ -313,6 +312,15 @@ export default {
             };
             this.errors = {};
         },
+        resetInactivityTimeout() {
+      // Limpiar cualquier timeout previo
+      clearTimeout(this.inactivityTimeout);
+
+      // Configurar un nuevo timeout
+      this.inactivityTimeout = setTimeout(() => {
+        this.logout(); // Llamar al método de logout si no hay actividad
+      }, this.inactivityTimeLimit);
+    },
         async fetchFootballPositions() {
             try {
                 const response = await axios.get('http://localhost:3000/api/data/football-positions');
@@ -448,8 +456,8 @@ export default {
             axios.post('http://localhost:3000/api/staff', staffData)
                 .then(response => {
                     // Asumiendo que la respuesta es exitosa
-                    //console.log('Personal agregado correctamente:', response.data);
-                    //console.log(staffData);
+                    console.log('Personal agregado correctamente:', response.data);
+                    console.log(staffData);
                     this.closeAddStaffModal(); // Cierra el modal al agregar el personal
                 })
                 .catch(error => {
@@ -495,7 +503,7 @@ export default {
             axios.post('http://localhost:3000/api/student', studentData)
                 .then(response => {
                     // Asumiendo que la respuesta es exitosa
-                    //console.log('Estudiante agregado correctamente:', response.data);
+                    console.log('Estudiante agregado correctamente:', response.data);
                     //console.log(studentData);
                     this.closeAddStudentModal(); // Cierra el modal al agregar el estudiante
                 })
@@ -550,7 +558,7 @@ export default {
             // Llamar a la API para agregar el usuario
             axios.post('http://localhost:3000/api/user', userData)
                 .then(response => {
-                    //console.log('Usuario agregado:', response.data);
+                    console.log('Usuario agregado:', response.data);
 
                     // Asignar el mensaje de éxito con el correo
                     this.successMessage = `CORREO ENVIADO SATISFACTORIAMENTE A ${this.newUser.email} FAVOR REVISE SU BANDEJA DE ENTRADA`;
@@ -593,8 +601,13 @@ export default {
         },
 
         logout() {
-            alert('Sesión cerrada'); // Implementar el cierre de sesión aquí
-        },
+        // Eliminar el rol y el usuario del localStorage
+        localStorage.removeItem('user_rol');
+        localStorage.removeItem('username');
+
+        // Redirigir al HomeComponent
+        this.$router.push({ name: 'Home' });
+         },
         goToComponent(cardTitle) {
             let routeName = '';
 
@@ -619,9 +632,6 @@ export default {
     }
 };
 </script>
-
-
-
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');

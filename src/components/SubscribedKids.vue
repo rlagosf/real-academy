@@ -27,7 +27,7 @@
               <th>Edad</th>
               <th>Posición de fútbol</th>
               <th>Categoría</th>
-              <th>Acciones</th>
+              <th v-if="userRol !== 1">Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -40,7 +40,7 @@
               <td>{{ kid.age }}</td>
               <td>{{ getFootballPositionName(kid.football_position) }}</td>
               <td>{{ getCategoryName(kid.category_id) }}</td>
-              <td>
+              <td v-if="userRol !== 1">
                 <button @click="editKid(kid)">
                   <i class="fas fa-pencil-alt"></i>
                 </button>
@@ -150,15 +150,25 @@ export default {
       showSuccessModal: false, // Asegúrate de que esta propiedad esté definida
       successMessage: '', // Asegúrate también de inicializar successMessage
       editingKid: {}, // Datos del niño que se está editando
-      kidToDelete: null // Niño que se va a eliminar
+      kidToDelete: null, // Niño que se va a eliminar
+      userRol: null,
     };
   },
   mounted() {
     this.fetchSubscribedKids();
     this.fetchFootBallPositions();
     this.fetchCategories();
+    this.getUserRol();
   },
   methods: {
+    async getUserRol() {
+      // Aquí debes obtener el rol desde donde lo estés guardando (localStorage, backend, etc.)
+      // Por ejemplo, si lo tienes guardado en localStorage:
+      const roleFromStorage = localStorage.getItem('user_rol'); 
+      if (roleFromStorage) {
+        this.userRol = parseInt(roleFromStorage);  // Asignamos el rol al estado
+      }
+    },
     // Fetch para obtener los datos de los niños
     async fetchSubscribedKids() {
       try {

@@ -17,7 +17,8 @@
       <img src="/assets/logos/logo-en-negativo.png" alt="Logo" class="login-logo" />
       <h1 class="title-center">Solicitudes Pendientes</h1> <!-- Añadí la clase title-center -->
 
-      <table>
+      <!-- Verificamos el rol antes de mostrar la tabla -->
+      <table v-if="isAllowedToView">
         <thead>
           <tr>
             <th>Nombre</th>
@@ -37,6 +38,9 @@
           </tr>
         </tbody>
       </table>
+
+      <!-- Mensaje si el usuario no tiene permiso para ver la información -->
+      <p v-else>No tienes permisos para ver esta información.</p>
     </div>
   </div>
 </template>
@@ -54,14 +58,24 @@ export default {
     return {
       contactPetitions: [],
       loading: true, // Indica si los datos se están cargando
-      sources: []
+      sources: [],
+      isAllowedToView: false // Verificamos si el usuario tiene permisos
     };
   },
   created() {
+    this.checkPermissions();
     this.fetchContactPetitions();
     this.fetchSources();
   },
   methods: {
+    // Método para verificar los permisos basados en el rol_id
+    checkPermissions() {
+      const userRol = localStorage.getItem('user_rol');
+      console.log('User Role:', userRol);  // Verifica el rol que se ha almacenado
+      if (userRol && (userRol === '1' || userRol === '2')) {
+        this.isAllowedToView = true; // Si el rol es 1 o 2, se permite ver la información
+      }
+    },
     async fetchContactPetitions() {
       try {
         const response = await axios.get('http://localhost:3000/api/contact');
@@ -75,16 +89,15 @@ export default {
     async fetchSources() {
       try {
         const response = await axios.get('http://localhost:3000/api/data/sources');
-        //console.log('Sources obtenidos:', response.data);
-        this.sources = response.data;  // Guardar las profesiones en el estado
+        this.sources = response.data;  // Guardar las fuentes en el estado
       } catch (error) {
-        console.error('Error al obtener las profesiones:', error);
+        console.error('Error al obtener las fuentes:', error);
       }
     },
     getSourceName(sourceId) {
-    const source = this.sources.find(source => source.id === sourceId);
-    return source ? source.name : 'Desconocido'; // Retorna 'Desconocido' si no se encuentra el ID
-  },
+      const source = this.sources.find(source => source.id === sourceId);
+      return source ? source.name : 'Desconocido'; // Retorna 'Desconocido' si no se encuentra el ID
+    },
     // Método para redirigir al Dashboard usando $router
     goToDashboard() {
       this.$router.push({ name: 'Dashboard' }); // Usar $router en lugar de useRouter

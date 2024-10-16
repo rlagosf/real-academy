@@ -12,31 +12,24 @@
 </template>
 
 <script>
-import MainNavigator from './MainNavigator.vue';
-import VideoBackground from './VideoBackground.vue';
-import AboutUs from './AboutUs.vue';
-import PhotoGallery from './PhotoGallery.vue';
-import MapLocation from './MapLocation.vue';
-import ContactForm from './ContactForm.vue';
-import RealFoot from './RealFoot.vue';
-import BackgroundMusic from './BackgroundMusic.vue';
+import { defineAsyncComponent } from 'vue';
 
 export default {
-  name: 'HomeComponent',  // Asegúrate de que el nombre sea correcto
+  name: 'HomeComponent',
   components: {
-    MainNavigator,
-    VideoBackground,
-    AboutUs,
-    PhotoGallery,
-    MapLocation,
-    ContactForm,
-    RealFoot,
-    BackgroundMusic,
+    BackgroundMusic: defineAsyncComponent(() => import('./BackgroundMusic.vue')),
+    MainNavigator: defineAsyncComponent(() => import('./MainNavigator.vue')),
+    VideoBackground: defineAsyncComponent(() => import('./VideoBackground.vue')),
+    AboutUs: defineAsyncComponent(() => import('./AboutUs.vue')),
+    PhotoGallery: defineAsyncComponent(() => import('./PhotoGallery.vue')),
+    MapLocation: defineAsyncComponent(() => import('./MapLocation.vue')),
+    ContactForm: defineAsyncComponent(() => import('./ContactForm.vue')),
+    RealFoot: defineAsyncComponent(() => import('./RealFoot.vue')),
   }
 };
 </script>
 
-<style>
+<style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 
 body {
@@ -49,5 +42,19 @@ body {
 #home {
   width: 100%;
   overflow-x: hidden;
+}
+
+/* Estilos globales adicionales */
+* {
+  box-sizing: border-box; /* Evita problemas con márgenes y padding */
+  margin: 0;
+  padding: 0;
+  border: none; /* Eliminar bordes por defecto */
+  outline: none; /* Desactivar contornos automáticos */
+}
+
+a {
+  text-decoration: none; /* Evitar enlaces no deseados */
+  color: inherit; /* Mantener el color heredado */
 }
 </style>

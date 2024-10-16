@@ -33,16 +33,28 @@ export default {
     };
   },
   methods: {
+    // Método para sanitizar las entradas del usuario
+    sanitizeInput(input) {
+      // Reemplaza caracteres peligrosos
+      return input.replace(/[<>/'";]/g, '');
+    },
     async login() {
       try {
+        // Sanitización de los inputs antes de enviarlos
+        const sanitizedUsername = this.sanitizeInput(this.username);
+        const sanitizedPassword = this.sanitizeInput(this.password);
+
         const response = await axios.post('http://localhost:3000/api/user/login', {
-          username: this.username,
-          password: this.password
+          username: sanitizedUsername,
+          password: sanitizedPassword
         });
 
-        if (response.data.success) {
-          // Autenticación exitosa
-          alert('¡Login Exitoso!');
+        if (response.status === 200) {
+          // Almacenamos rol_id y username en localStorage
+          localStorage.setItem('user_rol', response.data.user.rol_id);
+          localStorage.setItem('username', response.data.user.username);
+
+          // Redirigir al dashboard
           this.$router.push({ name: 'Dashboard' });
         } else {
           // Si el login falla, mostrar mensaje de error

@@ -24,7 +24,8 @@
             <th>Teléfono</th>
             <th>Email</th>
             <th>Ocupación</th>
-            <th>Acciones</th>
+            <!-- Mostrar columna de Acciones solo si el rol es diferente a 1 -->
+            <th v-if="userRol !== 1">Acciones</th> 
           </tr>
         </thead>
         <tbody>
@@ -34,9 +35,9 @@
             <td>{{ staff.address }}</td>
             <td>{{ staff.phone }}</td>
             <td>{{ staff.email }}</td>
-            <td>{{ getOccupationName(staff.occupation) }}</td> <!-- Mostrar el nombre de la ocupación -->
-            <td>
-              <!-- Eliminar botón con modal de confirmación -->
+            <td>{{ getOccupationName(staff.occupation) }}</td>
+            <!-- Mostrar botones de acciones solo si el rol es diferente a 1 -->
+            <td v-if="userRol !== 1">
               <button @click="confirmDelete(staff.rut)">
                 <i class="fas fa-trash"></i>
               </button>
@@ -86,13 +87,23 @@ export default {
       staffToDelete: null, // Almacena el miembro del staff que se va a eliminar
       showSuccessModal: false,
       successMessage: '', // Asegúrate también de inicializar successMessage
+      userRol : null,
     };
   },
   created() {
     this.fetchStaffMembers();  // Cargar los miembros del staff cuando se cree el componente
     this.fetchProfessions();   // Cargar las profesiones
+    this.getUserRol();
   },
   methods: {
+    async getUserRol() {
+      // Aquí debes obtener el rol desde donde lo estés guardando (localStorage, backend, etc.)
+      // Por ejemplo, si lo tienes guardado en localStorage:
+      const roleFromStorage = localStorage.getItem('user_rol'); 
+      if (roleFromStorage) {
+        this.userRol = parseInt(roleFromStorage);  // Asignamos el rol al estado
+      }
+    },
     async fetchStaffMembers() {
       try {
         const response = await axios.get('http://localhost:3000/api/staff');
