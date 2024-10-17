@@ -106,7 +106,6 @@
       </div>
     </div>
 
-
     <!-- Modal de confirmación de eliminación -->
     <div v-if="showDeleteModal" class="modal-overlay" @click.self="closeDeleteModal">
       <div class="modal-content">
@@ -129,7 +128,6 @@
   </div>
 </template>
 
-
 <script>
 import axios from 'axios';
 import LoadingReal from './LoadingReal.vue'; // Importar el componente LoadingReal
@@ -141,6 +139,8 @@ export default {
   },
   data() {
     return {
+      inactivityTimeout: null,
+      inactivityTimeLimit: 5 * 60 * 1000, // 5 minutos en milisegundos
       kids: [], // Datos de los niños
       footballPositions: [], // Para almacenar las posiciones de fútbol
       categories: [], // Para almacenar las categorías
@@ -155,58 +155,83 @@ export default {
     };
   },
   mounted() {
+    this.resetInactivityTimeout();
     this.fetchSubscribedKids();
     this.fetchFootBallPositions();
     this.fetchCategories();
     this.getUserRol();
   },
+  beforeUnmount() {
+        window.removeEventListener('mousemove', this.resetInactivityTimeout);
+        window.removeEventListener('keydown', this.resetInactivityTimeout);
+        window.removeEventListener('click', this.resetInactivityTimeout);
+    },
+ 
   methods: {
     async getUserRol() {
-      // Aquí debes obtener el rol desde donde lo estés guardando (localStorage, backend, etc.)
-      // Por ejemplo, si lo tienes guardado en localStorage:
-      const roleFromStorage = localStorage.getItem('user_rol'); 
+      const roleFromStorage = localStorage.getItem('user_rol');
       if (roleFromStorage) {
         this.userRol = parseInt(roleFromStorage);  // Asignamos el rol al estado
       }
     },
-    // Fetch para obtener los datos de los niños
     async fetchSubscribedKids() {
       try {
-        const response = await axios.get('http://localhost:3000/api/student');
+        const response = await axios.get('http://localhost:3000/api/student', {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('auth_token')}` // Enviar token de autenticación
+          }
+        });
         this.kids = response.data;
-        //console.log('Datos de estudiantes obtenidos:', this.kids); // Log para confirmar que los datos llegan
       } catch (error) {
         console.error('Error al obtener los alumnos inscritos:', error);
       } finally {
         this.loading = false;
       }
     },
-
-    // Fetch para obtener las posiciones de fútbol
     async fetchFootBallPositions() {
       try {
-        const response = await axios.get('http://localhost:3000/api/data/football-positions');
-        this.footballPositions = response.data; // Guardar las posiciones
+        const response = await axios.get('http://localhost:3000/api/data/football-positions', {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('auth_token')}` // Enviar token de autenticación
+          }
+        });
+        this.footballPositions = response.data;
       } catch (error) {
         console.error('Error al obtener las posiciones de fútbol:', error);
       }
     },
 
-    // Fetch para obtener las categorías
     async fetchCategories() {
       try {
-        const response = await axios.get('http://localhost:3000/api/data/categories');
-        this.categories = response.data; // Guardar las categorías
+        const response = await axios.get('http://localhost:3000/api/data/categories', {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('auth_token')}` // Enviar token de autenticación
+          }
+        });
+        this.categories = response.data;
       } catch (error) {
         console.error('Error al obtener las categorías:', error);
       }
     },
+    resetInactivityTimeout() {
+            // Limpiar cualquier timeout previo
+            clearTimeout(this.inactivityTimeout);
 
-    // Obtener el nombre de la posición de fútbol basado en el ID
+            // Configurar un nuevo timeout
+            this.inactivityTimeout = setTimeout(() => {
+                this.logout(); // Llamar al método de logout si no hay actividad
+            }, this.inactivityTimeLimit);
+        },
     getFootballPositionName(id) {
       const position = this.footballPositions.find(pos => pos.id === id);
-      return position ? position.position : 'Desconocido'; // Devuelve 'Desconocido' si no encuentra el ID
+      return position ? position.position : 'Desconocido';
     },
+
+    getCategoryName(id) {
+      const category = this.categories.find(cat => cat.id === id);
+      return category ? category.category_name : 'Desconocido';
+    },
+
     showSuccess(message) {
       this.successMessage = message;
       this.showSuccessModal = true;
@@ -215,86 +240,126 @@ export default {
       this.showSuccessModal = false;
     },
 
-    // Obtener el nombre de la categoría basado en el ID
-    getCategoryName(id) {
-      const category = this.categories.find(cat => cat.id === id);
-      return category ? category.category_name : 'Desconocido'; // Devuelve 'Desconocido' si no encuentra el ID
-    },
-
-    // Método para redirigir al Dashboard
     goToDashboard() {
       this.$router.push({ name: 'Dashboard' });
     },
 
-    // Método para eliminar un niño
-    deleteKid(rut) {
-      this.kidToDelete = rut; // Guardar el rut del niño a eliminar
-      this.showDeleteModal = true; // Mostrar el modal de eliminación
-      //console.log('Modal de eliminación activado para RUT:', rut); // Verificar si se activa el modal
+    async deleteKid(rut) {
+      this.kidToDelete = rut;
+      this.showDeleteModal = true;
+    },
+
+    async confirmDelete() {
+      try {
+        await axios.delete(`http://localhost:3000/api/student/${this.kidToDelete}`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('auth_token')}` // Enviar token de autenticación
+          }
+        });
+        this.showSuccess('Alumno eliminado con éxito');
+        this.kids = this.kids.filter(kid => kid.rut !== this.kidToDelete);
+      } catch (error) {
+        console.error('Error al eliminar alumno:', error);
+      } finally {
+        this.showDeleteModal = false;
+      }
+    },
+
+    async editKid(kid) {
+      // Obtener el rol del usuario desde localStorage
+      const userRol = localStorage.getItem('user_rol');
+
+      // Verificar si el rol existe
+      if (!userRol) {
+        console.error('No se ha encontrado el rol del usuario. Acceso denegado.');
+        this.showSuccess('No se ha encontrado el rol del usuario. Acceso denegado.');
+        return;
+      }
+
+      // Copiar los datos del niño para editar
+      this.editingKid = { ...kid };
+
+      // Mostrar el modal de edición
+      this.showEditModal = true; // Aseguramos que el modal se muestra antes de cualquier otra acción
+
+      // Al mostrar el modal, esperamos que el usuario haga sus cambios y luego se ejecute la lógica para guardar los cambios.
+    },
+
+    async saveChanges() {
+      // Obtener el rol desde localStorage
+      const userRol = localStorage.getItem('user_rol');
+
+      // Verificar si el rol existe
+      if (!userRol) {
+        console.error('No se ha encontrado el rol del usuario. Acceso denegado.');
+        this.showSuccess('No se ha encontrado el rol del usuario. Acceso denegado.');
+        return;
+      }
+
+      try {
+        // Realizar la solicitud PUT para editar el niño y enviamos el rol en los encabezados
+        const response = await axios.put(`http://localhost:3000/api/student/${this.editingKid.rut}`, {
+          weight: this.editingKid.weight,
+          height: this.editingKid.height,
+          age: this.editingKid.age,
+          football_position: this.editingKid.football_position,
+          category_id: this.editingKid.category_id
+        }, {
+          headers: {
+            'X-User-Rol': userRol  // Aseguramos que el rol se envíe en los encabezados
+          }
+        });
+
+        // Verificamos la respuesta
+        console.log("Respuesta del backend al editar el registro:", response);
+
+        // Si la respuesta es exitosa, actualizamos la lista de niños
+        const index = this.kids.findIndex(k => k.rut === this.editingKid.rut);
+        if (index !== -1) {
+          this.kids.splice(index, 1, { ...this.editingKid });
+        }
+
+        // Cerrar el modal de edición
+        this.showEditModal = false;
+
+        // Mostrar mensaje de éxito
+        this.showSuccess('Registro editado');
+
+      } catch (error) {
+        // Mostrar el error en consola y mostrar mensaje de error
+        console.error('Error al intentar editar el niño:', error);
+
+        if (error.response && error.response.data) {
+          // Si hay respuesta del backend, mostrarla
+          console.error('Detalles del error del backend:', error.response.data);
+          this.showSuccess(`Hubo un error al intentar editar el registro: ${error.response.data.message || 'Error desconocido'}`);
+        } else {
+          console.error('Error desconocido:', error);
+          this.showSuccess('Hubo un error desconocido');
+        }
+      }
     }
     ,
 
-
-    // Confirmar eliminación del niño
-    confirmDelete() {
-      //console.log('Confirmando eliminación para RUT:', this.kidToDelete); // Log antes de eliminar
-      axios.delete(`http://localhost:3000/api/student/${this.kidToDelete}`)
-        .then(() => {
-          this.kids = this.kids.filter(k => k.rut !== this.kidToDelete);
-          //console.log('Eliminado exitosamente:', this.kidToDelete); // Log para confirmar la eliminación
-          //alert('Registro eliminado');
-          this.showDeleteModal = false;
-        })
-        .catch(error => {
-          console.error('Error al eliminar el alumno:', error);
-        });
-      this.showSuccess('Registro eliminado');
+    closeEditModal() {
+      this.showEditModal = false;
     },
 
-    // Cerrar modal de eliminación
     closeDeleteModal() {
       this.showDeleteModal = false;
     },
+    logout() {
+            // Eliminar el rol y el usuario del localStorage
+            localStorage.removeItem('user_rol');
+            localStorage.removeItem('username');
 
-    // Método para editar un niño
-    editKid(kid) {
-      this.editingKid = { ...kid }; // Copiar los datos del niño para editar
-      this.showEditModal = true; // Mostrar el modal de edición
-    },
-
-    // Guardar los cambios editados
-    saveChanges() {
-      //console.log('Datos editados:', this.editingKid); // Log para verificar los datos a enviar
-      axios.put(`http://localhost:3000/api/student/${this.editingKid.rut}`, {
-        weight: this.editingKid.weight,
-        height: this.editingKid.height,
-        age: this.editingKid.age,
-        football_position: this.editingKid.football_position,
-        category_id: this.editingKid.category_id
-      })
-        .then(() => {
-          const index = this.kids.findIndex(kid => kid.rut === this.editingKid.rut);
-          if (index !== -1) {
-            this.kids.splice(index, 1, { ...this.editingKid });
-          }
-          this.showEditModal = false;
-          //console.log('Cambios guardados exitosamente:', this.editingKid); // Log para confirmar que los cambios se guardaron
-          //alert('Información actualizada');
-        })
-        .catch(error => {
-          console.error('Error al guardar los cambios:', error);
-        });
-      this.showSuccess('Registro editado');
-    }
-    ,
-
-    // Cerrar modal de edición
-    closeEditModal() {
-      this.showEditModal = false;
-    }
-  }
+            // Redirigir al HomeComponent
+            this.$router.push({ name: 'Home' });
+        },
+  },
 };
 </script>
+
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
@@ -373,7 +438,6 @@ select {
 
 .btn-black:hover {
   opacity: 0.8;
-
 }
 
 .btn-black:hover {
@@ -396,7 +460,7 @@ select {
   background-color: white;
   padding: 20px;
   border-radius: 8px;
-  width: 400px;
+  width: 300px;
   text-align: center;
   position: relative;
 }
@@ -457,12 +521,12 @@ select {
   font-size: 16px;
   font-family: 'Bebas Neue', sans-serif;
   transition: background-color 0.3s, opacity 0.3s;
-  opacity: 0.9; /* Opacidad inicial */
+  opacity: 0.9;
 }
 
 .modal-actions .btn-black:hover {
-  background-color: #ff007f; /* Cambiar a color #ff007f en hover */
-  opacity: 1; /* Cambiar opacidad al 100% cuando se pasa el puntero */
+  background-color: #ff007f;
+  opacity: 1;
 }
 
 /* Responsividad */
@@ -595,4 +659,22 @@ th {
     white-space: nowrap;
   }
 }
+
+/* Animación tipo látigo para los modales */
+.modal-content {
+  animation: whip-in 0.6s ease-out;
+}
+
+@keyframes whip-in {
+  0% {
+    transform: scale(0) rotate(0deg);
+  }
+  70% {
+    transform: scale(1.1) rotate(0deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
 </style>
+

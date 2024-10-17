@@ -7,7 +7,7 @@
     <div v-if="!loading" class="staff-academy-container">
       <!-- Botón para redirigir al Dashboard en la esquina superior derecha -->
       <button class="back-to-dashboard" @click="goToDashboard">
-        <i class="fas fa-arrow-left back-arrow"></i> 
+        <i class="fas fa-arrow-left back-arrow"></i>
         <i class="fas fa-door-open door-icon"></i>
         <span class="back-text">Volver al Dashboard</span>
       </button>
@@ -25,7 +25,7 @@
             <th>Email</th>
             <th>Ocupación</th>
             <!-- Mostrar columna de Acciones solo si el rol es diferente a 1 -->
-            <th v-if="userRol !== 1">Acciones</th> 
+            <th v-if="userRol !== 1">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -80,6 +80,8 @@ export default {
   },
   data() {
     return {
+      inactivityTimeout: null,
+      inactivityTimeLimit: 5 * 60 * 1000, // 5 minutos en milisegundos
       staffMembers: [],  // Lista de miembros del staff
       professions: [],   // Lista de profesiones
       loading: true,     // Indicador de carga
@@ -87,27 +89,28 @@ export default {
       staffToDelete: null, // Almacena el miembro del staff que se va a eliminar
       showSuccessModal: false,
       successMessage: '', // Asegúrate también de inicializar successMessage
-      userRol : null,
+      userRol: null,
     };
   },
   created() {
+  
     this.fetchStaffMembers();  // Cargar los miembros del staff cuando se cree el componente
     this.fetchProfessions();   // Cargar las profesiones
     this.getUserRol();
   },
+  
   methods: {
     async getUserRol() {
-      // Aquí debes obtener el rol desde donde lo estés guardando (localStorage, backend, etc.)
-      // Por ejemplo, si lo tienes guardado en localStorage:
-      const roleFromStorage = localStorage.getItem('user_rol'); 
+      // Validación y obtención del rol desde localStorage
+      const roleFromStorage = localStorage.getItem('user_rol');
       if (roleFromStorage) {
-        this.userRol = parseInt(roleFromStorage);  // Asignamos el rol al estado
+        this.userRol = parseInt(roleFromStorage);  // Asignamos el rol al estado solo si es un número válido
       }
     },
+
     async fetchStaffMembers() {
       try {
         const response = await axios.get('http://localhost:3000/api/staff');
-        //console.log('Respuesta de la API:', response.data);  // Mostrar la respuesta de la API
         this.staffMembers = response.data;  // Asignar directamente los datos del staff
       } catch (error) {
         console.error('Error al obtener los miembros del staff:', error);
@@ -115,10 +118,10 @@ export default {
         this.loading = false;  // Ocultar el loader cuando los datos se carguen
       }
     },
+
     async fetchProfessions() {
       try {
         const response = await axios.get('http://localhost:3000/api/data/professions');
-        //console.log('Profesiones obtenidas:', response.data);
         this.professions = response.data;  // Guardar las profesiones en el estado
       } catch (error) {
         console.error('Error al obtener las profesiones:', error);
@@ -129,24 +132,46 @@ export default {
       const profession = this.professions.find(prof => prof.id === occupationId);
       return profession ? profession.name : 'Desconocido';  // Si no encuentra la profesión, muestra 'Desconocido'
     },
+
     // Mostrar el modal de confirmación de eliminación
     confirmDelete(rut) {
       this.staffToDelete = rut;  // Guardar el miembro a eliminar
       this.showDeleteModal = true;  // Mostrar el modal
     },
+
     // Eliminar el miembro del staff
     async deleteStaff() {
-      try {
-        await axios.delete(`http://localhost:3000/api/staff/${this.staffToDelete}`);
-        // Eliminar el miembro de la lista
-        this.staffMembers = this.staffMembers.filter(s => s.rut !== this.staffToDelete);
-        this.closeDeleteModal();  // Cerrar el modal
-      } catch (error) {
-        console.error('Error al eliminar el miembro:', error);
-      }
-      this.showSuccess('Registro eliminado');
-    },
+      const userRol = localStorage.getItem('user_rol');  // Obtener el rol del usuario desde localStorage
 
+      if (!userRol) {
+        // Si no hay un rol, denegamos la acción y mostramos un mensaje de error
+        console.error('No se ha encontrado el rol del usuario. Acceso denegado.');
+        return;
+      }
+
+      try {
+        // Realizamos la solicitud DELETE, enviando el user_rol en los encabezados
+        await axios.delete(`http://localhost:3000/api/staff/${this.staffToDelete}`, {
+          headers: {
+            'X-User-Rol': userRol  // Enviar el rol en los encabezados
+          }
+        });
+
+        // Eliminar el miembro de la lista si la solicitud es exitosa
+        this.staffMembers = this.staffMembers.filter(s => s.rut !== this.staffToDelete);
+
+        // Cerrar el modal después de eliminar correctamente
+        this.closeDeleteModal();
+        this.showSuccess('Registro eliminado con éxito');
+
+      } catch (error) {
+        // Manejo de errores
+        console.error('Error al eliminar el miembro:', error);
+
+        // Mostrar un mensaje de error o una alerta al usuario
+        this.showSuccess('Hubo un error al eliminar el registro');
+      }
+    },
     showSuccess(message) {
       this.successMessage = message;
       this.showSuccessModal = true;
@@ -159,12 +184,22 @@ export default {
       this.showDeleteModal = false;
       this.staffToDelete = null;
     },
+    logout() {
+            // Eliminar el rol y el usuario del localStorage
+            localStorage.removeItem('user_rol');
+            localStorage.removeItem('username');
+
+            // Redirigir al HomeComponent
+            this.$router.push({ name: 'Home' });
+        },
+    // Redirigir al Dashboard
     goToDashboard() {
       this.$router.push({ name: 'Dashboard' });  // Redirigir al Dashboard
     }
   }
 };
 </script>
+
 
 <style scoped>
 .staff-academy-container {
@@ -218,15 +253,18 @@ export default {
   }
 
   .back-to-dashboard .back-arrow {
-    display: none; /* Ocultar la flecha */
+    display: none;
+    /* Ocultar la flecha */
   }
 
   .back-to-dashboard .door-icon {
-    display: inline-block; /* Mostrar el icono de la puerta */
+    display: inline-block;
+    /* Mostrar el icono de la puerta */
   }
 
   .back-to-dashboard .back-text {
-    display: none; /* Ocultar el texto en pantallas pequeñas */
+    display: none;
+    /* Ocultar el texto en pantallas pequeñas */
   }
 }
 
@@ -237,15 +275,18 @@ export default {
   }
 
   .back-to-dashboard .back-arrow {
-    display: none; /* Ocultar la flecha */
+    display: none;
+    /* Ocultar la flecha */
   }
 
   .back-to-dashboard .door-icon {
-    display: inline-block; /* Mostrar el icono de la puerta */
+    display: inline-block;
+    /* Mostrar el icono de la puerta */
   }
 
   .back-to-dashboard .back-text {
-    display: none; /* Ocultar el texto en pantallas aún más pequeñas */
+    display: none;
+    /* Ocultar el texto en pantallas aún más pequeñas */
   }
 }
 
@@ -273,7 +314,8 @@ table {
   box-shadow: 0 0 0 0px #ff007f;
 }
 
-th, td {
+th,
+td {
   border: 0.8px solid #ff007f;
   padding: 5px;
   text-align: center;
@@ -288,20 +330,28 @@ th {
 /* Ajustes para dispositivos pequeños */
 @media (max-width: 375px) {
   .staff-academy-container {
-    overflow-x: auto; /* Permitir scroll horizontal si el contenido se sale */
-    padding: 10px; /* Reducir el padding */
+    overflow-x: auto;
+    /* Permitir scroll horizontal si el contenido se sale */
+    padding: 10px;
+    /* Reducir el padding */
   }
 
   table {
-    width: 100%; /* Asegurarse de que la tabla no sea más ancha que el contenedor */
-    table-layout: fixed; /* Forzar que las columnas tengan un ancho fijo para evitar desbordes */
+    width: 100%;
+    /* Asegurarse de que la tabla no sea más ancha que el contenedor */
+    table-layout: fixed;
+    /* Forzar que las columnas tengan un ancho fijo para evitar desbordes */
     overflow-x: auto;
-    display: block; /* Hacer que la tabla sea bloque para permitir scroll horizontal */
+    display: block;
+    /* Hacer que la tabla sea bloque para permitir scroll horizontal */
   }
 
-  th, td {
-    padding: 10px 5px; /* Reducir el padding de las celdas */
-    white-space: nowrap; /* Evitar que el texto se rompa en varias líneas */
+  th,
+  td {
+    padding: 10px 5px;
+    /* Reducir el padding de las celdas */
+    white-space: nowrap;
+    /* Evitar que el texto se rompa en varias líneas */
   }
 
   .back-to-dashboard {
@@ -324,17 +374,23 @@ th {
 
 @media (max-width: 667px) {
   .table-responsive {
-    overflow-x: auto; /* Agregar scroll si la tabla se desborda */
+    overflow-x: auto;
+    /* Agregar scroll si la tabla se desborda */
   }
 
   table {
-    display: block; /* Convertir la tabla en un bloque para scroll */
-    width: 100%; /* Evitar que se salga del contenedor */
+    display: block;
+    /* Convertir la tabla en un bloque para scroll */
+    width: 100%;
+    /* Evitar que se salga del contenedor */
   }
 
-  th, td {
-    padding: 8px; /* Ajustar padding para celdas en pantallas pequeñas */
-    white-space: nowrap; /* Mantener contenido en una sola línea */
+  th,
+  td {
+    padding: 8px;
+    /* Ajustar padding para celdas en pantallas pequeñas */
+    white-space: nowrap;
+    /* Mantener contenido en una sola línea */
   }
 }
 
@@ -355,9 +411,10 @@ th {
   background-color: white;
   padding: 20px;
   border-radius: 8px;
-  width: 400px;
+  width: 300px;
   text-align: center;
   position: relative;
+  animation: elastic 0.5s ease-out;
 }
 
 .modal-close {
@@ -388,6 +445,19 @@ th {
 
 .btn-black:hover {
   background-color: #e6006f;
+}
+
+/* Animación tipo látigo para los modales */
+@keyframes elastic {
+  0% {
+    transform: scale(0) rotate(0deg);
+  }
+  70% {
+    transform: scale(1.1) rotate(0deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
 }
 </style>
 

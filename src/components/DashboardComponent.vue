@@ -270,8 +270,8 @@ export default {
         }
     },
     created() {
-    // Obtener el rol del usuario desde localStorage
-    this.userRol = parseInt(localStorage.getItem('user_rol'));
+        // Obtener el rol del usuario desde localStorage
+        this.userRol = parseInt(localStorage.getItem('user_rol'));
     },
     mounted() {
         this.resetInactivityTimeout();
@@ -281,10 +281,10 @@ export default {
         this.fetchProfessions();
     },
 
-    beforeUnmount(){
+    beforeUnmount() {
         window.removeEventListener('mousemove', this.resetInactivityTimeout);
-    window.removeEventListener('keydown', this.resetInactivityTimeout);
-    window.removeEventListener('click', this.resetInactivityTimeout);
+        window.removeEventListener('keydown', this.resetInactivityTimeout);
+        window.removeEventListener('click', this.resetInactivityTimeout);
     },
     methods: {
         toggleSidebar() {
@@ -313,14 +313,14 @@ export default {
             this.errors = {};
         },
         resetInactivityTimeout() {
-      // Limpiar cualquier timeout previo
-      clearTimeout(this.inactivityTimeout);
+            // Limpiar cualquier timeout previo
+            clearTimeout(this.inactivityTimeout);
 
-      // Configurar un nuevo timeout
-      this.inactivityTimeout = setTimeout(() => {
-        this.logout(); // Llamar al método de logout si no hay actividad
-      }, this.inactivityTimeLimit);
-    },
+            // Configurar un nuevo timeout
+            this.inactivityTimeout = setTimeout(() => {
+                this.logout(); // Llamar al método de logout si no hay actividad
+            }, this.inactivityTimeLimit);
+        },
         async fetchFootballPositions() {
             try {
                 const response = await axios.get('http://localhost:3000/api/data/football-positions');
@@ -601,13 +601,13 @@ export default {
         },
 
         logout() {
-        // Eliminar el rol y el usuario del localStorage
-        localStorage.removeItem('user_rol');
-        localStorage.removeItem('username');
+            // Eliminar el rol y el usuario del localStorage
+            localStorage.removeItem('user_rol');
+            localStorage.removeItem('username');
 
-        // Redirigir al HomeComponent
-        this.$router.push({ name: 'Home' });
-         },
+            // Redirigir al HomeComponent
+            this.$router.push({ name: 'Home' });
+        },
         goToComponent(cardTitle) {
             let routeName = '';
 
@@ -659,11 +659,32 @@ export default {
     z-index: 140;
     font-family: 'Bebas Neue', sans-serif;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    animation: none; /* No animation by default */
+    transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
+/* Agregamos el efecto de entrada con "latigazo" */
 .modal.modal-visible {
     display: block;
+    opacity: 1;
+    animation: elastic 0.5s ease-out forwards;
     z-index: 200;
+}
+
+@keyframes elastic {
+    0% {
+        transform: translate(-50%, -50%) scale(0) rotate(0deg);
+        opacity: 0;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.1) rotate(0deg);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1) rotate(0deg);
+        opacity: 1;
+    }
 }
 
 .modal-active {
@@ -806,7 +827,6 @@ export default {
     background-color: #333;
 }
 
-
 .sidebar-title {
     margin-bottom: 10px;
     font-size: 1.5em;
@@ -851,7 +871,6 @@ export default {
 .generate-password:hover {
     background-color: #e6006f;
 }
-
 
 .option-text {
     flex-grow: 1;
@@ -968,7 +987,6 @@ export default {
     color: #fff;
 }
 
-/* Configuración para dispositivos pequeños */
 @media (max-width: 375px) and (max-height: 667px),
 (max-width: 360px) and (max-height: 740px),
 (max-width: 540px) and (max-height: 720px),
@@ -977,63 +995,47 @@ export default {
         height: 550px;
         overflow: hidden;
         padding: 5px;
-        /* Reducir el padding general del modal */
     }
 
     .modal-extra {
         height: 420px;
-        /* Height máximo para el modal extra */
         overflow-y: auto;
-        /* Permitir scroll si es necesario */
     }
 
     .modal h3 {
         font-size: 1.1em;
-        /* Reducir el tamaño del título */
         margin-bottom: 8px;
-        /* Reducir el espacio inferior del título */
     }
 
     .modal input,
     .modal select,
     .add-button {
         font-size: 0.8em;
-        /* Tamaño de fuente más pequeño para los inputs y botón */
         padding: 6px;
-        /* Reducir el padding de los inputs y botones */
     }
 
     .input-group {
         margin-bottom: 4px;
-        /* Reducir el margen entre grupos de inputs */
     }
 
     .input-group label {
         font-size: 0.8em;
-        /* Reducir el tamaño de la fuente de las etiquetas */
         margin-bottom: 3px;
-        /* Reducir el margen entre la etiqueta y el input */
     }
 
     .add-button {
         font-size: 0.8em;
-        /* Reducir el tamaño del texto del botón */
         padding: 6px;
-        /* Reducir el padding del botón */
         margin-top: 15px;
-        /* Separar el botón del combobox */
     }
 
-    /* Ocultar logo y título en dispositivos pequeños */
     .login-logo,
     .dashboard-title {
         display: none;
     }
 }
 
-/* Ocultar logo y título cuando el ancho y la altura son inferiores a 1024 */
 @media (max-width: 1024px) and (max-height: 1024px) {
-
     .login-logo,
     .dashboard-title {
         display: none;
@@ -1048,14 +1050,12 @@ input[type="number"].no-spin::-webkit-inner-spin-button {
 
 input[type="number"].no-spin {
     -moz-appearance: textfield;
-    /* Firefox */
     appearance: textfield;
-    /* Otros navegadores */
 }
 
-/* Estilos adicionales, si es necesario */
 input[type="number"] {
     width: 100%;
     box-sizing: border-box;
 }
 </style>
+

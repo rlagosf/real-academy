@@ -2,14 +2,14 @@
   <section class="video-background" id="home">
     <div v-for="(video, index) in videoUrls" :key="index">
       <video v-show="currentIndex === index" autoplay muted loop class="background-video" @loadeddata="onVideoLoaded"
-        @ended="onVideoEnded" @contextmenu.prevent>
+        @ended="onVideoEnded" @contextmenu.prevent @error="onVideoError">
         <source :src="video.mp4" type="video/mp4" />
         <source :src="video.webm" type="video/webm" />
         Your browser does not support the video tag.
       </video>
     </div>
     <div class="overlay">
-      <img src="/assets/logos/logo-en-blanco.png" class="logo" alt="Logo" />
+      <img src="/assets/logos/logo-en-blanco.png" class="logo" alt="logo" />
       <h1>BIENVENIDOS a REAL ACADEMY FC</h1>
     </div>
   </section>
@@ -26,8 +26,13 @@ export default {
     };
   },
   async created() {
-    this.videoUrls = await this.fetchVideoUrls();
-    this.startVideoCycle();
+    try {
+      this.videoUrls = await this.fetchVideoUrls();
+      this.startVideoCycle();
+    } catch (error) {
+      console.error("Error al cargar los videos:", error);
+      this.showErrorMessage("No se pudieron cargar los videos.");
+    }
   },
   methods: {
     async fetchVideoUrls() {
@@ -72,8 +77,18 @@ export default {
     },
     onVideoLoaded() {
       // Esta función se ejecuta cuando un video ha terminado de cargar
-      // Puedes implementar aquí lógica adicional si es necesario
+      //console.log('Video cargado');
     },
+    onVideoError(event) {
+      // Cuando ocurre un error al cargar o reproducir el video
+      console.error('Error al cargar el video', event);
+      this.showErrorMessage("Hubo un problema al cargar el video.");
+    },
+    showErrorMessage(message) {
+      // Aquí puedes implementar un mensaje de error visual para el usuario
+      console.error(message);
+      alert(message); // O utilizar algún componente de notificación
+    }
   },
 };
 </script>

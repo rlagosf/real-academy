@@ -3,14 +3,15 @@
     <div class="slider">
       <div class="slide-track" :class="{ paused: modalVisible }">
         <div class="slide" v-for="(image, index) in imageUrls.concat(imageUrls)" :key="'first-' + index">
-          <img :src="image.lowRes" @click="openModal(image.original)" alt="" loading="lazy" class="imagen" />
+          <!-- Ahora utilizamos la función sanitizedImageSrc solo en el src -->
+          <img :src="sanitizedImageSrc(image.lowRes)" @click="openModal(image.original)" alt="" loading="lazy" class="imagen" />
         </div>
       </div>
     </div>
     <div v-if="modalVisible" class="modal-overlay" @click="closeModal">
       <div class="modal-content fade-in" @click.stop>
         <span class="close" @click="closeModal">&times;</span>
-        <img :src="modalImage" alt="" />
+        <img :src="sanitizedImageSrc(modalImage)" alt="" />
       </div>
     </div>
   </div>
@@ -36,6 +37,12 @@ export default {
       return urls;
     };
 
+    // Sanitiza la URL y devuelve la imagen de placeholder solo si la URL no es válida
+    const sanitizedImageSrc = (src) => {
+      // Verificamos que el src no sea nulo o vacío antes de mostrar la imagen
+      return src && src !== '' ? src : '/assets/images/placeholder.webp';
+    };
+
     // Función para abrir el modal
     const openModal = (imageUrl) => {
       modalImage.value = imageUrl;
@@ -50,6 +57,16 @@ export default {
         modalImage.value = null;
         document.body.style.overflow = '';
       });
+    };
+
+    // Prevenir el clic derecho
+    const disableContextMenu = (event) => {
+      event.preventDefault();
+    };
+
+    // Prevenir la selección de imágenes
+    const disableSelection = (event) => {
+      event.preventDefault();
     };
 
     // Al montar el componente, obtener las URLs de las imágenes
@@ -70,9 +87,12 @@ export default {
       modalImage,
       openModal,
       closeModal,
+      disableContextMenu,
+      disableSelection,
+      sanitizedImageSrc
     };
   }
-}
+};
 </script>
 
 <style scoped>
@@ -107,12 +127,10 @@ body {
   display: flex;
   width: calc(300px * 100);
   animation: scroll 160s linear infinite;
-  /* Carrusel más lento */
 }
 
 .slide-track.paused {
   animation-play-state: paused;
-  /* Pausar el carrusel */
 }
 
 .slide img {
@@ -120,7 +138,6 @@ body {
   width: 350px;
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease, border-radius 0.3s ease;
-  /* Manteniendo la transición */
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   margin: 20px;
   border-radius: 45px;

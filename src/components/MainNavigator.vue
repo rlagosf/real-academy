@@ -104,7 +104,7 @@ html {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 30px;
+  padding: 9px 30px;
   background-color: transparent;
   color: white;
   position: fixed;
